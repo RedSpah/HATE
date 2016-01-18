@@ -12,18 +12,18 @@ Interested?
 
 INSTALLATION GUIDE:
 
-1. Move HATE.exe and "bin" to Program Files (x86)/Steam/steamapps/common/Undertale
-2. Launch HATE.exe
+1. Move HATE.exe and "bin" to Program Files (x86)/Steam/steamapps/common/Undertale  
+2. Launch HATE.exe  
 3. Have fun, you don't need to move any other files
 
 UNINSTALLATION GUIDE:
 
-A. Easier but Slower:
+A. Easier but Slower:  
 1. Remove everything in Program Files (x86)/Steam/steamapps/common/Undertale folder and let it redownload.
 
-B. Harder but Faster:
-1. Move Undertale.exe, located in folder Program Files (x86)/Steam/steamapps/common/Undertale/Undertale anywhere really.
-2. Remove everything in Program Files (x86)/Steam/steamapps/common/Undertale folder.
+B. Harder but Faster:  
+1. Move Undertale.exe, located in folder Program Files (x86)/Steam/steamapps/common/Undertale/Undertale anywhere really.  
+2. Remove everything in Program Files (x86)/Steam/steamapps/common/Undertale folder.  
 3. Move the Undertale.exe back into the Program Files (x86)/Steam/steamapps/common/Undertale folder.
 
 WHAT ABOUT MAC / LINUX:
