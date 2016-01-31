@@ -171,11 +171,17 @@ namespace HATE
                     }
 
                     Data.Position = BitConverter.ToInt32(PointerList[i + 1].Ptr, 0) - SpriteHitboxSize;
-                    Data.Write(new byte[] { 255, 0, 0, 0, 0, 0, 0, 0 }, 0, 8);
-
-                    while (Counter++ < SpriteHitboxSize)
+                    if (SpriteHitboxSize % 2 != 0)
                     {
-                        Data.Write(new byte[] { 0 }, 0, 1);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2).ToArray(), 0, SpriteHitboxSize / 2);
+                        Data.Write(new byte[] { 255 }, 0, 1);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2).ToArray(), 0, SpriteHitboxSize / 2);
+                    }
+                    else
+                    {
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 -1).ToArray(), 0, SpriteHitboxSize / 2 -1);
+                        Data.Write(new byte[] { 255, 255}, 0, 2);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 1).ToArray(), 0, SpriteHitboxSize / 2 - 1);
                     }
                 }
 
