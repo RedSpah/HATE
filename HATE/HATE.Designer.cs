@@ -29,126 +29,136 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HATE));
-            this.button1 = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.button_Corrupt = new System.Windows.Forms.Button();
+            this.checkBox_ShuffleText = new System.Windows.Forms.CheckBox();
+            this.checkBox_ShuffleGFX = new System.Windows.Forms.CheckBox();
+            this.checkBox_HitboxFix = new System.Windows.Forms.CheckBox();
+            this.checkBox_ShuffleFont = new System.Windows.Forms.CheckBox();
+            this.checkBox_ShuffleBG = new System.Windows.Forms.CheckBox();
+            this.checkBox_ShuffleAudio = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
-            // button1
+            // button_Corrupt
             // 
-            this.button1.Location = new System.Drawing.Point(20, 234);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(147, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Go!\r\n\r\n";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.BtnClicked_Go);
+            this.button_Corrupt.BackColor = System.Drawing.Color.Black;
+            this.button_Corrupt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Corrupt.Font = new System.Drawing.Font("Papyrus", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_Corrupt.ForeColor = System.Drawing.Color.Coral;
+            this.button_Corrupt.Location = new System.Drawing.Point(20, 234);
+            this.button_Corrupt.Name = "button_Corrupt";
+            this.button_Corrupt.Size = new System.Drawing.Size(147, 25);
+            this.button_Corrupt.TabIndex = 0;
+            this.button_Corrupt.Text = "💀 CORRUPT";
+            this.button_Corrupt.UseVisualStyleBackColor = false;
+            this.button_Corrupt.Click += new System.EventHandler(this.button_Corrupt_Clicked);
             // 
-            // checkBox1
+            // checkBox_ShuffleText
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox1.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox1.FlatAppearance.BorderSize = 0;
-            this.checkBox1.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox1.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.ForeColor = System.Drawing.Color.Red;
-            this.checkBox1.Location = new System.Drawing.Point(14, 197);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(153, 31);
-            this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "Shuffle Text";
-            this.checkBox1.UseVisualStyleBackColor = false;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.checkBox_ShuffleText.AutoSize = true;
+            this.checkBox_ShuffleText.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShuffleText.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleText.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShuffleText.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShuffleText.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShuffleText.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShuffleText.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleText.Location = new System.Drawing.Point(14, 197);
+            this.checkBox_ShuffleText.Name = "checkBox_ShuffleText";
+            this.checkBox_ShuffleText.Size = new System.Drawing.Size(150, 31);
+            this.checkBox_ShuffleText.TabIndex = 1;
+            this.checkBox_ShuffleText.Text = "Shuffle Text";
+            this.checkBox_ShuffleText.UseVisualStyleBackColor = false;
+            this.checkBox_ShuffleText.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleText_CheckedChanged);
             // 
-            // checkBox2
+            // checkBox_ShuffleGFX
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox2.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox2.FlatAppearance.BorderSize = 0;
-            this.checkBox2.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox2.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox2.ForeColor = System.Drawing.Color.Red;
-            this.checkBox2.Location = new System.Drawing.Point(14, 160);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(175, 31);
-            this.checkBox2.TabIndex = 2;
-            this.checkBox2.Text = "Shuffle Sprites";
-            this.checkBox2.UseVisualStyleBackColor = false;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
+            this.checkBox_ShuffleGFX.AutoSize = true;
+            this.checkBox_ShuffleGFX.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShuffleGFX.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleGFX.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShuffleGFX.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShuffleGFX.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShuffleGFX.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShuffleGFX.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleGFX.Location = new System.Drawing.Point(14, 160);
+            this.checkBox_ShuffleGFX.Name = "checkBox_ShuffleGFX";
+            this.checkBox_ShuffleGFX.Size = new System.Drawing.Size(172, 31);
+            this.checkBox_ShuffleGFX.TabIndex = 2;
+            this.checkBox_ShuffleGFX.Text = "Shuffle Sprites";
+            this.checkBox_ShuffleGFX.UseVisualStyleBackColor = false;
+            this.checkBox_ShuffleGFX.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleGFX_CheckedChanged);
             // 
-            // checkBox3
+            // checkBox_HitboxFix
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox3.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox3.FlatAppearance.BorderSize = 0;
-            this.checkBox3.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox3.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox3.ForeColor = System.Drawing.Color.Red;
-            this.checkBox3.Location = new System.Drawing.Point(13, 123);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(128, 31);
-            this.checkBox3.TabIndex = 3;
-            this.checkBox3.Text = "Hitbox Fix";
-            this.checkBox3.UseVisualStyleBackColor = false;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.checkBox_HitboxFix.AutoSize = true;
+            this.checkBox_HitboxFix.BackColor = System.Drawing.Color.Black;
+            this.checkBox_HitboxFix.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_HitboxFix.FlatAppearance.BorderSize = 0;
+            this.checkBox_HitboxFix.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_HitboxFix.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_HitboxFix.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_HitboxFix.ForeColor = System.Drawing.Color.White;
+            this.checkBox_HitboxFix.Location = new System.Drawing.Point(13, 123);
+            this.checkBox_HitboxFix.Name = "checkBox_HitboxFix";
+            this.checkBox_HitboxFix.Size = new System.Drawing.Size(125, 31);
+            this.checkBox_HitboxFix.TabIndex = 3;
+            this.checkBox_HitboxFix.Text = "Hitbox Fix";
+            this.checkBox_HitboxFix.UseVisualStyleBackColor = false;
+            this.checkBox_HitboxFix.CheckedChanged += new System.EventHandler(this.checkBox_HitboxFix_CheckedChanged);
             // 
-            // checkBox4
+            // checkBox_ShuffleFont
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox4.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox4.FlatAppearance.BorderSize = 0;
-            this.checkBox4.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox4.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox4.ForeColor = System.Drawing.Color.Red;
-            this.checkBox4.Location = new System.Drawing.Point(13, 86);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(159, 31);
-            this.checkBox4.TabIndex = 4;
-            this.checkBox4.Text = "Shuffle Fonts";
-            this.checkBox4.UseVisualStyleBackColor = false;
-            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            this.checkBox_ShuffleFont.AutoSize = true;
+            this.checkBox_ShuffleFont.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShuffleFont.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleFont.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShuffleFont.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShuffleFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShuffleFont.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShuffleFont.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleFont.Location = new System.Drawing.Point(13, 86);
+            this.checkBox_ShuffleFont.Name = "checkBox_ShuffleFont";
+            this.checkBox_ShuffleFont.Size = new System.Drawing.Size(156, 31);
+            this.checkBox_ShuffleFont.TabIndex = 4;
+            this.checkBox_ShuffleFont.Text = "Shuffle Fonts";
+            this.checkBox_ShuffleFont.UseVisualStyleBackColor = false;
+            this.checkBox_ShuffleFont.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleFont_CheckedChanged);
             // 
-            // checkBox5
+            // checkBox_ShuffleBG
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox5.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox5.FlatAppearance.BorderSize = 0;
-            this.checkBox5.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox5.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox5.ForeColor = System.Drawing.Color.Red;
-            this.checkBox5.Location = new System.Drawing.Point(13, 49);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(148, 31);
-            this.checkBox5.TabIndex = 5;
-            this.checkBox5.Text = "Shuffle GFX";
-            this.checkBox5.UseVisualStyleBackColor = false;
-            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBox5_CheckedChanged);
+            this.checkBox_ShuffleBG.AutoSize = true;
+            this.checkBox_ShuffleBG.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShuffleBG.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleBG.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShuffleBG.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShuffleBG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShuffleBG.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShuffleBG.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleBG.Location = new System.Drawing.Point(13, 49);
+            this.checkBox_ShuffleBG.Name = "checkBox_ShuffleBG";
+            this.checkBox_ShuffleBG.Size = new System.Drawing.Size(145, 31);
+            this.checkBox_ShuffleBG.TabIndex = 5;
+            this.checkBox_ShuffleBG.Text = "Shuffle GFX";
+            this.checkBox_ShuffleBG.UseVisualStyleBackColor = false;
+            this.checkBox_ShuffleBG.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleBG_CheckedChanged);
             // 
-            // checkBox6
+            // checkBox_ShuffleAudio
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.BackColor = System.Drawing.Color.Transparent;
-            this.checkBox6.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.checkBox6.FlatAppearance.BorderSize = 0;
-            this.checkBox6.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.checkBox6.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox6.ForeColor = System.Drawing.Color.Red;
-            this.checkBox6.Location = new System.Drawing.Point(13, 12);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(159, 31);
-            this.checkBox6.TabIndex = 6;
-            this.checkBox6.Text = "Shuffle Audio";
-            this.checkBox6.UseVisualStyleBackColor = false;
-            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
+            this.checkBox_ShuffleAudio.AutoSize = true;
+            this.checkBox_ShuffleAudio.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShuffleAudio.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleAudio.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShuffleAudio.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShuffleAudio.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShuffleAudio.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShuffleAudio.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShuffleAudio.Location = new System.Drawing.Point(13, 12);
+            this.checkBox_ShuffleAudio.Name = "checkBox_ShuffleAudio";
+            this.checkBox_ShuffleAudio.Size = new System.Drawing.Size(156, 31);
+            this.checkBox_ShuffleAudio.TabIndex = 6;
+            this.checkBox_ShuffleAudio.Text = "Shuffle Audio";
+            this.checkBox_ShuffleAudio.UseVisualStyleBackColor = false;
+            this.checkBox_ShuffleAudio.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleAudio_CheckedChanged);
             // 
             // HATE
             // 
@@ -157,13 +167,13 @@
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(184, 271);
-            this.Controls.Add(this.checkBox6);
-            this.Controls.Add(this.checkBox5);
-            this.Controls.Add(this.checkBox4);
-            this.Controls.Add(this.checkBox3);
-            this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.checkBox_ShuffleAudio);
+            this.Controls.Add(this.checkBox_ShuffleBG);
+            this.Controls.Add(this.checkBox_ShuffleFont);
+            this.Controls.Add(this.checkBox_HitboxFix);
+            this.Controls.Add(this.checkBox_ShuffleGFX);
+            this.Controls.Add(this.checkBox_ShuffleText);
+            this.Controls.Add(this.button_Corrupt);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(200, 310);
@@ -171,7 +181,6 @@
             this.MinimumSize = new System.Drawing.Size(200, 310);
             this.Name = "HATE";
             this.Text = "HATE";
-            this.Load += new System.EventHandler(this.HATE_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,13 +188,13 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.CheckBox checkBox5;
-        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.Button button_Corrupt;
+        private System.Windows.Forms.CheckBox checkBox_ShuffleText;
+        private System.Windows.Forms.CheckBox checkBox_ShuffleGFX;
+        private System.Windows.Forms.CheckBox checkBox_HitboxFix;
+        private System.Windows.Forms.CheckBox checkBox_ShuffleFont;
+        private System.Windows.Forms.CheckBox checkBox_ShuffleBG;
+        private System.Windows.Forms.CheckBox checkBox_ShuffleAudio;
     }
 }
 

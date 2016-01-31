@@ -70,7 +70,9 @@
     <Compile Include="HATE.Designer.cs">
       <DependentUpon>HATE.cs</DependentUpon>
     </Compile>
-    <Compile Include="Methods1.cs" />
+    <Compile Include="Functionality.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeMethods.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -101,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="hateicon.ico" />
+    <Content Include="Unused.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">
