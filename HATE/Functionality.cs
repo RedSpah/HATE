@@ -111,7 +111,7 @@ namespace HATE
             PointerList.Shuffle();
             Data.Position = PointerArrayBegin;
 
-            for (int i = 0; i < PointerNum; i++)
+            for (int i = 0; i < PointerList.Count; i++)
             {
                 Data.Position = PointerList[(i + 1) % PointerList.Count].PtrLocation;
                 Data.Write(PointerList[i].Ptr, 0, 4);
@@ -120,24 +120,24 @@ namespace HATE
             return true;
         }
 
-        public bool ShuffleAudio_Func()
+        public bool ShuffleAudio_Func(float chance)
         {
-            return LoadDataAndFind("AUDO", 23300000, 1.0f, SimpleShuffle) && LoadDataAndFind("SOND", 0, 1.0f, SimpleShuffle);
+            return LoadDataAndFind("AUDO", 23300000, chance, SimpleShuffle) && LoadDataAndFind("SOND", 0, chance, SimpleShuffle);
         }
 
-        public bool ShuffleBG_Func()
+        public bool ShuffleBG_Func(float chance)
         {
-            return LoadDataAndFind("BGND", 1900000, 1.0f, SimpleShuffle);
+            return LoadDataAndFind("BGND", 1900000, chance, SimpleShuffle);
         }
 
-        public bool ShuffleFont_Func()
+        public bool ShuffleFont_Func(float chance)
         {
-            return LoadDataAndFind("FONT", 1900000, 1.0f, SimpleShuffle);
+            return LoadDataAndFind("FONT", 1900000, chance, SimpleShuffle);
         }
 
-        public bool HitboxFix_Func()
+        public bool HitboxFix_Func(float chance)
         {
-            return LoadDataAndFind("SPRT", 15000, 1.0f, delegate (FileStream Data, float shufflechance, string header)
+            return LoadDataAndFind("SPRT", 15000, chance, delegate (FileStream Data, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;
@@ -157,7 +157,7 @@ namespace HATE
 
                 for (int i = 0; i < PointerNum - 1; i++)
                 {
-                    int SpriteSizeX, SpriteSizeY, SpriteHitboxSize, Counter = 8;
+                    int SpriteSizeX, SpriteSizeY, SpriteHitboxSize;
                     Data.Position = BitConverter.ToInt32(PointerList[i].Ptr, 0) + 4;
                     Data.Read(ReadBuffer, 0, 4);
                     SpriteSizeX = BitConverter.ToInt32(ReadBuffer, 0);
@@ -173,15 +173,15 @@ namespace HATE
                     Data.Position = BitConverter.ToInt32(PointerList[i + 1].Ptr, 0) - SpriteHitboxSize;
                     if (SpriteHitboxSize % 2 != 0)
                     {
-                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2).ToArray(), 0, SpriteHitboxSize / 2);
-                        Data.Write(new byte[] { 255 }, 0, 1);
-                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2).ToArray(), 0, SpriteHitboxSize / 2);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
+                        Data.Write(new byte[] { 255, 255, 255, 255, 255, 255, 255 }, 0, 7);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
                     }
                     else
                     {
-                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 -1).ToArray(), 0, SpriteHitboxSize / 2 -1);
-                        Data.Write(new byte[] { 255, 255}, 0, 2);
-                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 1).ToArray(), 0, SpriteHitboxSize / 2 - 1);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
+                        Data.Write(new byte[] { 15, 255, 255, 255, 255, 240 }, 0, 6);
+                        Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
                     }
                 }
 
@@ -189,14 +189,76 @@ namespace HATE
             });
         }
 
-        public bool ShuffleGFX_Func()
+        public bool ShuffleGFX_Func(float chance)
         {
-            return LoadDataAndFind("SPRT", 15000, 1.0f, SimpleShuffle);
+            return LoadDataAndFind("SPRT", 15000, chance, delegate (FileStream Data, float shufflechance, string header)
+            {
+                byte[] ReadBuffer = new byte[4];
+                int PointerNum = 0;
+                long PointerArrayBegin = 0;
+                List<Pointer> PointerList = new List<Pointer>();
+
+                Data.Read(ReadBuffer, 0, 4);
+                PointerNum = BitConverter.ToInt32(ReadBuffer, 0);
+                PointerArrayBegin = Data.Position;
+
+                for (int i = 0; i < PointerNum; i++)
+                {
+                    if (RNG.NextDouble() < shufflechance)
+                    {
+                        byte[] _tmp = new byte[4], _tmp2 = new byte[4];
+                        Data.Read(_tmp, 0, 4);
+                        Pointer Ptr = new Pointer(_tmp, Data.Position - 4);
+                        long Pos = Data.Position;
+                        Data.Position = BitConverter.ToInt32(Ptr.Ptr, 0);
+                        Data.Read(_tmp2, 0, 4);
+                        Data.Position = BitConverter.ToInt32(_tmp2, 0);
+
+                        List<byte> ByteString = new List<byte>();
+                        bool StringBegun = false;
+
+                        for (int j = 0; j < 128; j++)
+                        {
+                            ByteString.Add((byte)Data.ReadByte());
+
+                            if (ByteString[ByteString.Count - 1] == 0 && StringBegun)
+                            {
+                                break;
+                            }
+
+                            if (ByteString[ByteString.Count - 1] != 0)
+                            {
+                                StringBegun = true;
+                            }
+                        }
+
+                        string ConvertedString = new string(ByteString.Where(x => x == '_' || (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z') || (x >= '0' && x <= '9')).Select(x => (char)x).ToArray());
+
+                        if (!FriskSpriteHandles.Contains(ConvertedString.Trim()) || FriskMode)
+                        {
+                            PointerList.Add(Ptr);
+                        }
+
+                        Data.Position = Pos;
+                    }
+                }
+
+                PointerList.Shuffle();
+                Data.Position = PointerArrayBegin;
+
+                for (int i = 0; i < PointerList.Count; i++)
+                {
+                    Data.Position = PointerList[(i + 1) % PointerList.Count].PtrLocation;
+                    Data.Write(PointerList[i].Ptr, 0, 4);
+                }
+
+                return true;
+            });
         }
 
-        public bool ShuffleText_Func()
+        public bool ShuffleText_Func(float chance)
         {
-            return LoadDataAndFind("STRG", 11100000, 1.0f, delegate (FileStream Data, float shufflechance, string header)
+            return LoadDataAndFind("STRG", 11100000, chance, delegate (FileStream Data, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;

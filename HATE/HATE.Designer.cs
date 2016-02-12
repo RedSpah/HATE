@@ -36,6 +36,11 @@
             this.checkBox_ShuffleFont = new System.Windows.Forms.CheckBox();
             this.checkBox_ShuffleBG = new System.Windows.Forms.CheckBox();
             this.checkBox_ShuffleAudio = new System.Windows.Forms.CheckBox();
+            this.checkBox_ShowSeed = new System.Windows.Forms.CheckBox();
+            this.textBox_Seed = new System.Windows.Forms.TextBox();
+            this.textBox_Power = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button_Corrupt
@@ -44,7 +49,7 @@
             this.button_Corrupt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_Corrupt.Font = new System.Drawing.Font("Papyrus", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_Corrupt.ForeColor = System.Drawing.Color.Coral;
-            this.button_Corrupt.Location = new System.Drawing.Point(20, 234);
+            this.button_Corrupt.Location = new System.Drawing.Point(20, 325);
             this.button_Corrupt.Name = "button_Corrupt";
             this.button_Corrupt.Size = new System.Drawing.Size(147, 25);
             this.button_Corrupt.TabIndex = 0;
@@ -160,13 +165,77 @@
             this.checkBox_ShuffleAudio.UseVisualStyleBackColor = false;
             this.checkBox_ShuffleAudio.CheckedChanged += new System.EventHandler(this.checkBox_ShuffleAudio_CheckedChanged);
             // 
+            // checkBox_ShowSeed
+            // 
+            this.checkBox_ShowSeed.AutoSize = true;
+            this.checkBox_ShowSeed.BackColor = System.Drawing.Color.Black;
+            this.checkBox_ShowSeed.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.checkBox_ShowSeed.FlatAppearance.BorderSize = 0;
+            this.checkBox_ShowSeed.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
+            this.checkBox_ShowSeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.checkBox_ShowSeed.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox_ShowSeed.ForeColor = System.Drawing.Color.White;
+            this.checkBox_ShowSeed.Location = new System.Drawing.Point(14, 234);
+            this.checkBox_ShowSeed.Name = "checkBox_ShowSeed";
+            this.checkBox_ShowSeed.Size = new System.Drawing.Size(129, 31);
+            this.checkBox_ShowSeed.TabIndex = 7;
+            this.checkBox_ShowSeed.Text = "Show Seed";
+            this.checkBox_ShowSeed.UseVisualStyleBackColor = false;
+            this.checkBox_ShowSeed.CheckedChanged += new System.EventHandler(this.checkBox_ShowSeed_CheckedChanged);
+            // 
+            // textBox_Seed
+            // 
+            this.textBox_Seed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Seed.Location = new System.Drawing.Point(67, 273);
+            this.textBox_Seed.Name = "textBox_Seed";
+            this.textBox_Seed.Size = new System.Drawing.Size(100, 20);
+            this.textBox_Seed.TabIndex = 8;
+            // 
+            // textBox_Power
+            // 
+            this.textBox_Power.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Power.Location = new System.Drawing.Point(67, 299);
+            this.textBox_Power.Name = "textBox_Power";
+            this.textBox_Power.Size = new System.Drawing.Size(100, 20);
+            this.textBox_Power.TabIndex = 9;
+            this.textBox_Power.Text = "0 - 255";
+            this.textBox_Power.Enter += new System.EventHandler(this.textBox_Power_Enter);
+            this.textBox_Power.Leave += new System.EventHandler(this.textBox_Power_Leave);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Papyrus", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label1.Location = new System.Drawing.Point(8, 273);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(56, 22);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Seed:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Papyrus", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label2.Location = new System.Drawing.Point(8, 299);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 22);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Power:";
+            // 
             // HATE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(184, 271);
+            this.ClientSize = new System.Drawing.Size(184, 362);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBox_Power);
+            this.Controls.Add(this.textBox_Seed);
+            this.Controls.Add(this.checkBox_ShowSeed);
             this.Controls.Add(this.checkBox_ShuffleAudio);
             this.Controls.Add(this.checkBox_ShuffleBG);
             this.Controls.Add(this.checkBox_ShuffleFont);
@@ -176,7 +245,6 @@
             this.Controls.Add(this.button_Corrupt);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(200, 310);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(200, 310);
             this.Name = "HATE";
@@ -195,6 +263,11 @@
         private System.Windows.Forms.CheckBox checkBox_ShuffleFont;
         private System.Windows.Forms.CheckBox checkBox_ShuffleBG;
         private System.Windows.Forms.CheckBox checkBox_ShuffleAudio;
+        private System.Windows.Forms.CheckBox checkBox_ShowSeed;
+        private System.Windows.Forms.TextBox textBox_Seed;
+        private System.Windows.Forms.TextBox textBox_Power;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 
