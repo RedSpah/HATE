@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Windows.Forms;
 
 namespace HATE
 {
-    struct StringPointer
+    class StringPointer
     {
         public Pointer Base;
         public string Ending;
@@ -18,7 +15,7 @@ namespace HATE
         {
             Base = ptr;
             Str = str;
-            char[] FormatChars = { '%', '/' };
+            char[] FormatChars = { '%', '/', 'C' };
             List<char> Ending = new List<char>();
 
             for (int i = 1; i < str.Length; i++)
@@ -40,7 +37,7 @@ namespace HATE
         }
     }
 
-    struct Pointer
+    class Pointer
     {
         public byte[] Ptr;
         public long PtrLocation;
@@ -54,36 +51,49 @@ namespace HATE
         {
             byte[] ToFind = header.ToCharArray().Select(x => (byte)x).ToArray();
             byte[] ReadBuffer = new byte[ToFind.Length];
-            FileStream Data = Safe.OpenFileStream("./data.win");
+            FileStream Data = Safe.OpenFileStream("./" + DataWin);
             if (Data == null) { return false; }
-
+            DebugWriter.WriteLine("Opened " + DataWin + ".");
             Data.Position = loc;
 
             for (int i = 0; i < 2137420; i++)
             {
                 Data.Read(ReadBuffer, 0, ToFind.Length);
-                Data.Position -= 3;
 
                 if (ReadBuffer.Select((value, index) => value == ToFind[index]).All(x => x))
                 {
-                    Console.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
-                    Data.Position += 7;
+                    DebugWriter.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
 
-                    if (!Action(Data, shufflechance, header))
+                    Data.Position += 4;
+
+                    try
                     {
-                        Console.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
 
-                        Data.Close();
-                        return false;
+                        if (!Action(Data, shufflechance, header))
+                        {
+                            DebugWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
+
+                            Data.Close();
+                            return false;
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugWriter.Write("Exception Caught While Attempting To Modify " + header + " Memory Region. -> " + e);
+                        DebugWriter.Close();
+                        throw;
                     }
 
+                    DebugWriter.WriteLine(header + " Memory Region Modified Successfully.");
                     Data.Close();
-                    Console.WriteLine(header + " Memory Region Modified Successfully.");
+                    DebugWriter.WriteLine("Closed " + DataWin + ".");
                     return true;
                 }
             }
 
-            Console.WriteLine("Error: " + header + " Memory Region Not Found.");
+            DebugWriter.WriteLine("Error: " + header + " Memory Region Not Found.");
+            Data.Close();
             return false;
         }
 
@@ -107,15 +117,23 @@ namespace HATE
                     PointerList.Add(new Pointer(_tmp, Data.Position - 4));
                 }
             }
+            DebugWriter.WriteLine("Added " + PointerList.Count + " pointers to " + header + " List.");
 
-            PointerList.Shuffle();
+            PointerList.Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
+            {
+                long Tmp = LeftPtr.PtrLocation;
+                LeftPtr.PtrLocation = RightPtr.PtrLocation;
+                RightPtr.PtrLocation = Tmp;
+            });
+
             Data.Position = PointerArrayBegin;
 
             for (int i = 0; i < PointerList.Count; i++)
             {
-                Data.Position = PointerList[(i + 1) % PointerList.Count].PtrLocation;
+                Data.Position = PointerList[i].PtrLocation;
                 Data.Write(PointerList[i].Ptr, 0, 4);
             }
+            DebugWriter.WriteLine("Wrote " + PointerList.Count + " pointers to " + DataWin + ".");
 
             return true;
         }
@@ -154,6 +172,7 @@ namespace HATE
                     Data.Read(PointerBuffer, 0, 4);
                     PointerList.Add(new Pointer(PointerBuffer, Data.Position - 4));
                 }
+                DebugWriter.WriteLine("Added " + PointerNum + " sprite pointers to " + header + " List.");
 
                 for (int i = 0; i < PointerNum - 1; i++)
                 {
@@ -184,6 +203,7 @@ namespace HATE
                         Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
                     }
                 }
+                DebugWriter.WriteLine("Wrote " + PointerNum + " hitboxes to " + DataWin + ".");
 
                 return true;
             });
@@ -242,15 +262,26 @@ namespace HATE
                         Data.Position = Pos;
                     }
                 }
+                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " sprite pointers to " + header + " List.");
 
-                PointerList.Shuffle();
+                PointerList.Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
+                {
+                    long Tmp = LeftPtr.PtrLocation;
+                    LeftPtr.PtrLocation = RightPtr.PtrLocation;
+                    RightPtr.PtrLocation = Tmp;
+                });
+
+                DebugWriter.WriteLine("Shuffled " + PointerList.Count + " sprite pointers.");
+
                 Data.Position = PointerArrayBegin;
 
                 for (int i = 0; i < PointerList.Count; i++)
                 {
-                    Data.Position = PointerList[(i + 1) % PointerList.Count].PtrLocation;
+                    Data.Position = PointerList[i].PtrLocation;
                     Data.Write(PointerList[i].Ptr, 0, 4);
                 }
+
+                DebugWriter.WriteLine("Wrote " + PointerList.Count + " sprite pointers to " + DataWin + ".");
 
                 return true;
             });
@@ -258,7 +289,7 @@ namespace HATE
 
         public bool ShuffleText_Func(float chance)
         {
-            return LoadDataAndFind("STRG", 11100000, chance, delegate (FileStream Data, float shufflechance, string header)
+            return LoadDataAndFind("STRG", 10700000, chance, delegate (FileStream Data, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;
@@ -273,10 +304,16 @@ namespace HATE
 
                 for (int i = 0; i < PointerNum; i++)
                 {
-                    byte[] PointerBuffer = new byte[4];
-                    Data.Read(PointerBuffer, 0, 4);
-                    PointerList.Add(new Pointer(PointerBuffer, Data.Position - 4));
+                    if (RNG.NextDouble() < shufflechance)
+                    {
+                        byte[] PointerBuffer = new byte[4];
+                        Data.Read(PointerBuffer, 0, 4);
+                        PointerList.Add(new Pointer(PointerBuffer, Data.Position - 4));
+                    }
+
                 }
+                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " string pointers to STRG List.");
+
 
                 for (int i = 0; i < PointerList.Count; i++)
                 {
@@ -305,50 +342,50 @@ namespace HATE
                     if (StrlenByte >= 3 && !(BannedStrings.Any(ConvertedString.Contains)))
                     {
                         StrPointerList.Add(new StringPointer(PointerList[i], ByteString.ToArray()));
+
                     }
                 }
+                DebugWriter.WriteLine("Added " + StrPointerList.Count + " good string pointers to SprPointerList.");
 
-                List<Pointer> DialogueStrings = new List<Pointer>();
-                List<Pointer> TerminatingStrings = new List<Pointer>();
-                List<Pointer> HalfTerminatingStrings = new List<Pointer>(); // idk what they actually do but had to come up with something
+                Dictionary<string, List<Pointer>> StringDict = new Dictionary<string, List<Pointer>>();
+                int TotalStrings = 0;
 
                 foreach (StringPointer s in StrPointerList)
                 {
-                    if (s.Ending == "/")
+                    if (s.Ending != "")
                     {
-                        DialogueStrings.Add(s.Base);
-                    }
-                    else if (s.Ending == "/%%")
-                    {
-                        TerminatingStrings.Add(s.Base);
-                    }
-                    else if (s.Ending == "/%")
-                    {
-                        HalfTerminatingStrings.Add(s.Base);
+                        if (!StringDict.ContainsKey(s.Ending))
+                        {
+                            StringDict[s.Ending] = new List<Pointer>();
+                        }
+
+                        StringDict[s.Ending].Add(s.Base);
+                        TotalStrings++;
                     }
                 }
 
-                DialogueStrings.Shuffle();
-                TerminatingStrings.Shuffle();
-                HalfTerminatingStrings.Shuffle();
-
-                for (int i = 0; i < DialogueStrings.Count; i++)
+                foreach (string ending in StringDict.Keys)
                 {
-                    Data.Position = DialogueStrings[(i + 1) % DialogueStrings.Count].PtrLocation;
-                    Data.Write(DialogueStrings[i].Ptr, 0, 4);
+
+                    DebugWriter.WriteLine("Added " + StringDict[ending].Count + " string pointers of ending " + ending + " to dialogue string List.");
+
+                    StringDict[ending].Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
+                    {
+                        long Tmp = LeftPtr.PtrLocation;
+                        LeftPtr.PtrLocation = RightPtr.PtrLocation;
+                        RightPtr.PtrLocation = Tmp;
+                    });
+
+                    for (int i = 0; i < StringDict[ending].Count; i++)
+                    {
+                        Data.Position = StringDict[ending][i].PtrLocation;
+                        Data.Write(StringDict[ending][i].Ptr, 0, 4);
+
+                    }
+
                 }
 
-                for (int i = 0; i < TerminatingStrings.Count; i++)
-                {
-                    Data.Position = TerminatingStrings[(i + 1) % TerminatingStrings.Count].PtrLocation;
-                    Data.Write(TerminatingStrings[i].Ptr, 0, 4);
-                }
-
-                for (int i = 0; i < HalfTerminatingStrings.Count; i++)
-                {
-                    Data.Position = HalfTerminatingStrings[(i + 1) % HalfTerminatingStrings.Count].PtrLocation;
-                    Data.Write(HalfTerminatingStrings[i].Ptr, 0, 4);
-                }
+                DebugWriter.WriteLine("Wrote " + TotalStrings + " string pointers to " + DataWin + ".");
 
                 return true;
             });
@@ -367,6 +404,17 @@ namespace HATE
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
+            }
+        }
+
+        public static void Shuffle<T>(this IList<T> list, Action<T, T> SwapFunc)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = HATE.RNG.Next(n + 1);
+                SwapFunc(list[n], list[k]);
             }
         }
 
