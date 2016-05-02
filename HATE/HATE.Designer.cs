@@ -41,6 +41,7 @@
             this.textBox_Power = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.button_Launch = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button_Corrupt
@@ -53,7 +54,7 @@
             this.button_Corrupt.Name = "button_Corrupt";
             this.button_Corrupt.Size = new System.Drawing.Size(147, 25);
             this.button_Corrupt.TabIndex = 0;
-            this.button_Corrupt.Text = "💀 CORRUPT";
+            this.button_Corrupt.Text = "-CORRUPT-";
             this.button_Corrupt.UseVisualStyleBackColor = false;
             this.button_Corrupt.Click += new System.EventHandler(this.button_Corrupt_Clicked);
             // 
@@ -206,7 +207,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Papyrus", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(8, 273);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(56, 22);
@@ -217,20 +218,35 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Papyrus", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(8, 299);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 22);
             this.label2.TabIndex = 11;
             this.label2.Text = "Power:";
             // 
+            // button_Launch
+            // 
+            this.button_Launch.BackColor = System.Drawing.Color.Black;
+            this.button_Launch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Launch.Font = new System.Drawing.Font("Papyrus", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_Launch.ForeColor = System.Drawing.Color.Fuchsia;
+            this.button_Launch.Location = new System.Drawing.Point(20, 356);
+            this.button_Launch.Name = "button_Launch";
+            this.button_Launch.Size = new System.Drawing.Size(147, 25);
+            this.button_Launch.TabIndex = 12;
+            this.button_Launch.Text = "-LAUNCH UT-";
+            this.button_Launch.UseVisualStyleBackColor = false;
+            this.button_Launch.Click += new System.EventHandler(this.button_Launch_Clicked);
+            // 
             // HATE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.BackColor = System.Drawing.Color.Black;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(184, 362);
+            this.ClientSize = new System.Drawing.Size(184, 390);
+            this.Controls.Add(this.button_Launch);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox_Power);
@@ -268,6 +284,7 @@
         private System.Windows.Forms.TextBox textBox_Power;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button_Launch;
     }
 }
 

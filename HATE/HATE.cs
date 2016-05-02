@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Diagnostics;
 
 namespace HATE
 {
@@ -23,8 +23,28 @@ namespace HATE
         public static float TruePower = 0;
         public static string DefaultPowerText = "0 - 255";
         public static string DataWin = "data.win";
+        public static string RunUTScript = "Undertale.bat";
 
         public static string[] FriskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
+
+        private void button_Launch_Clicked(object sender, EventArgs e)
+        {
+            if (!File.Exists(RunUTScript))
+            {
+                MessageBox.Show($"ERROR: {RunUTScript} is not present in the folder. It will not be possible to launch Undertale from HATE without it present.");
+                return;
+            }
+
+            SetInput(false);
+            ProcessStartInfo UTScript = new ProcessStartInfo(RunUTScript, "test");
+            UTScript.UseShellExecute = false;
+            UTScript.RedirectStandardOutput = true;
+            Process UTProcess = Process.Start(UTScript);
+            string Output = UTProcess.StandardOutput.ReadToEnd();
+            UTProcess.WaitForExit();
+            SetInput(true);
+            Console.WriteLine(Output);
+        }
 
         private void button_Corrupt_Clicked(object sender, EventArgs e)
         {
@@ -51,6 +71,7 @@ namespace HATE
         public void SetInput(bool state)
         {
             button_Corrupt.Enabled = state;
+            button_Launch.Enabled = state;
             checkBox_ShuffleText.Enabled = state;
             checkBox_ShuffleGFX.Enabled = state;
             checkBox_HitboxFix.Enabled = state;
@@ -75,6 +96,14 @@ namespace HATE
         {
             InitializeComponent();
             UpdateCorrupt();
+
+            PlatformID OS = Environment.OSVersion.Platform;
+
+            if (OS == PlatformID.MacOSX || OS == PlatformID.Unix)
+            {
+                DataWin = "game.ios";
+                RunUTScript = "Undertale.sh";
+            }
         }
 
         public bool Setup()
@@ -130,15 +159,10 @@ namespace HATE
                 return false;
             }
 
-            if (!File.Exists("./data.win"))
+            if (!File.Exists("./" + DataWin))
             {
-                if (!File.Exists("./game.ios"))
-                {
-                    MessageBox.Show("You seem to be missing your resource file, data.win (Windows) / game.ios (Mac). If you have it but are just using Linux, PM /u/redspah on reddit to help me with porting HATE to linux.");
-                    return false;
-                }
-
-                DataWin = "game.ios";
+                MessageBox.Show($"You seem to be missing your resource file, {DataWin}. Make sure you've placed HATE.exe in the proper location.");
+                return false;
             }
 
             else if (!Directory.Exists("./Data"))
@@ -168,6 +192,8 @@ namespace HATE
             DebugWriter.WriteLine("Copied " + DataWin + ".");
             return true;
         }
+
+
 
         private void checkBox_ShuffleText_CheckedChanged(object sender, EventArgs e)
         {
@@ -226,6 +252,5 @@ namespace HATE
         {
             textBox_Power.Text = textBox_Power.Text == "" ? DefaultPowerText : textBox_Power.Text;
         }
-
     }
 }

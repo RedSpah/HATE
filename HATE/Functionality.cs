@@ -9,9 +9,9 @@ namespace HATE
     {
         public Pointer Base;
         public string Ending;
-        public byte[] Str;
+        public string Str;
 
-        public StringPointer(Pointer ptr, byte[] str)
+        public StringPointer(Pointer ptr, string str)
         {
             Base = ptr;
             Str = str;
@@ -20,7 +20,7 @@ namespace HATE
 
             for (int i = 1; i < str.Length; i++)
             {
-                char C = (char)str[str.Length - i];
+                char C = str[str.Length - i];
 
                 if (FormatChars.Contains(C))
                 {
@@ -262,6 +262,7 @@ namespace HATE
                         Data.Position = Pos;
                     }
                 }
+
                 DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " sprite pointers to " + header + " List.");
 
                 PointerList.Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
@@ -310,41 +311,41 @@ namespace HATE
                         Data.Read(PointerBuffer, 0, 4);
                         PointerList.Add(new Pointer(PointerBuffer, Data.Position - 4));
                     }
-
                 }
-                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " string pointers to STRG List.");
 
+                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " string pointers to STRG List.");
 
                 for (int i = 0; i < PointerList.Count; i++)
                 {
                     Data.Position = BitConverter.ToInt32(PointerList[i].Ptr, 0);
                     byte StrlenByte = (byte)Data.ReadByte();
+                    Data.Position += 3;
                     List<byte> ByteString = new List<byte>();
-                    bool StringBegun = false;
 
-                    for (int j = -3; j < StrlenByte; j++)
+                    for (int j = 0; j < StrlenByte; j++)
                     {
-                        ByteString.Add((byte)Data.ReadByte());
+                        byte TMP = (byte)Data.ReadByte();
 
-                        if (ByteString[ByteString.Count - 1] == 0 && StringBegun)
+                        if (TMP == 0)
                         {
                             break;
                         }
 
-                        if (ByteString[ByteString.Count - 1] != 0)
+                        else
                         {
-                            StringBegun = true;
+                            ByteString.Add(TMP);
                         }
+
                     }
 
                     string ConvertedString = new string(ByteString.Select(x => (char)x).ToArray());
 
                     if (StrlenByte >= 3 && !(BannedStrings.Any(ConvertedString.Contains)))
                     {
-                        StrPointerList.Add(new StringPointer(PointerList[i], ByteString.ToArray()));
-
+                        StrPointerList.Add(new StringPointer(PointerList[i], ConvertedString));
                     }
                 }
+
                 DebugWriter.WriteLine("Added " + StrPointerList.Count + " good string pointers to SprPointerList.");
 
                 Dictionary<string, List<Pointer>> StringDict = new Dictionary<string, List<Pointer>>();
@@ -366,7 +367,6 @@ namespace HATE
 
                 foreach (string ending in StringDict.Keys)
                 {
-
                     DebugWriter.WriteLine("Added " + StringDict[ending].Count + " string pointers of ending " + ending + " to dialogue string List.");
 
                     StringDict[ending].Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
@@ -382,7 +382,6 @@ namespace HATE
                         Data.Write(StringDict[ending][i].Ptr, 0, 4);
 
                     }
-
                 }
 
                 DebugWriter.WriteLine("Wrote " + TotalStrings + " string pointers to " + DataWin + ".");
@@ -436,6 +435,4 @@ namespace HATE
             return a.ToArray();
         }
     }
-
-
 }
