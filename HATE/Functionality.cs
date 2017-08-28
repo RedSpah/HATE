@@ -50,8 +50,13 @@ namespace HATE
         const int SearchAttempts = 2137420;
         const int WordSize = 4;
 
-        public bool LoadDataAndFind(string header, long loc, float shufflechance, Func<FileStream, float, string, bool> Action)
+        public bool LoadDataAndFind(string header, long loc, Random random, float shufflechance, Func<FileStream, Random, float, string, bool> Action)
         {
+            if (random == null)
+            {
+                throw new ArgumentNullException(nameof(random));
+            }
+
             byte[] ToFind = header.ToCharArray().Select(x => (byte)x).ToArray();
             byte[] ReadBuffer = new byte[ToFind.Length];
 
@@ -72,7 +77,7 @@ namespace HATE
 
                         try
                         {
-                            if (!Action(Data, shufflechance, header))
+                            if (!Action(Data, random, shufflechance, header))
                             {
                                 LogWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
                                 return false;
@@ -96,7 +101,7 @@ namespace HATE
             return false;
         }
 
-        public bool SimpleShuffle(FileStream Data, float shufflechance, string header)
+        public bool SimpleShuffle(FileStream Data, Random random, float shufflechance, string header)
         {
             byte[] ReadBuffer = new byte[WordSize];
             int PointerNum = 0;
@@ -120,7 +125,7 @@ namespace HATE
 
             LogWriter.WriteLine("Added " + PointerList.Count + " pointers to " + header + " List.");
 
-            PointerList.Shuffle(PointerSwapLoc);
+            PointerList.Shuffle(PointerSwapLoc, random);
 
             foreach (Pointer Ptr in PointerList)
             {
@@ -133,24 +138,24 @@ namespace HATE
             return true;
         }
 
-        public bool ShuffleAudio_Func(float chance)
+        public bool ShuffleAudio_Func(Random random, float chance)
         {
-            return LoadDataAndFind("AUDO", 23300000, chance, SimpleShuffle) && LoadDataAndFind("SOND", 0, chance, SimpleShuffle);
+            return LoadDataAndFind("AUDO", 23300000, random, chance, SimpleShuffle) && LoadDataAndFind("SOND", 0, random, chance, SimpleShuffle);
         }
 
-        public bool ShuffleBG_Func(float chance)
+        public bool ShuffleBG_Func(Random random, float chance)
         {
-            return LoadDataAndFind("BGND", 1900000, chance, SimpleShuffle);
+            return LoadDataAndFind("BGND", 1900000, random, chance, SimpleShuffle);
         }
 
-        public bool ShuffleFont_Func(float chance)
+        public bool ShuffleFont_Func(Random random, float chance)
         {
-            return LoadDataAndFind("FONT", 1900000, chance, SimpleShuffle);
+            return LoadDataAndFind("FONT", 1900000, random, chance, SimpleShuffle);
         }
 
-        public bool HitboxFix_Func(float chance)
+        public bool HitboxFix_Func(Random random, float chance)
         {
-            return LoadDataAndFind("SPRT", 15000, chance, delegate (FileStream Data, float shufflechance, string header)
+            return LoadDataAndFind("SPRT", 15000, random, chance, delegate (FileStream Data, Random random, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;
@@ -204,9 +209,9 @@ namespace HATE
             });
         }
 
-        public bool ShuffleGFX_Func(float chance)
+        public bool ShuffleGFX_Func(Random random_, float chance)
         {
-            return LoadDataAndFind("SPRT", 15000, chance, delegate (FileStream Data, float shufflechance, string header)
+            return LoadDataAndFind("SPRT", 15000, random_, chance, delegate (FileStream Data, Random random, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;
@@ -265,7 +270,7 @@ namespace HATE
                     long Tmp = LeftPtr.PtrLocation;
                     LeftPtr.PtrLocation = RightPtr.PtrLocation;
                     RightPtr.PtrLocation = Tmp;
-                });
+                }, random);
 
                 LogWriter.WriteLine("Shuffled " + PointerList.Count + " sprite pointers.");
 
@@ -283,9 +288,9 @@ namespace HATE
             });
         }
 
-        public bool ShuffleText_Func(float chance)
-        {
-            return LoadDataAndFind("STRG", 10700000, chance, delegate (FileStream Data, float shufflechance, string header)
+        public bool ShuffleText_Func(Random random_, float chance)
+        {          
+            return LoadDataAndFind("STRG", 10700000, random_, chance, delegate (FileStream Data, Random random, float shufflechance, string header)
             {
                 byte[] ReadBuffer = new byte[4];
                 int PointerNum = 0;
@@ -369,7 +374,7 @@ namespace HATE
                         long Tmp = LeftPtr.PtrLocation;
                         LeftPtr.PtrLocation = RightPtr.PtrLocation;
                         RightPtr.PtrLocation = Tmp;
-                    });
+                    }, random);
 
                     for (int i = 0; i < StringDict[ending].Count; i++)
                     {
@@ -404,50 +409,5 @@ namespace HATE
             return tmp;
         }
 
-    }
-
-    public static class Ext
-    {
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = MainForm.RNG.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-
-        public static void Shuffle<T>(this IList<T> list, Action<T, T> SwapFunc)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = MainForm.RNG.Next(n + 1);
-                SwapFunc(list[n], list[k]);
-            }
-        }
-
-        public static byte[] Garble(this byte[] ar, float chnc)
-        {
-            List<byte> a = new List<byte>();
-
-            for (int i = 0; i < ar.Count(); i++)
-            {
-                if (((ar[i] > 47 && ar[i] < 58) || (ar[i] > 96 && ar[i] < 123) || (ar[i] > 64 && ar[i] < 91)) && (MainForm.RNG.NextDouble() < chnc))
-                {
-                    a.Add((byte)(MainForm.RNG.Next(75) + 47));
-                }
-                else
-                {
-                    a.Add(ar[i]);
-                }
-            }
-            return a.ToArray();
-        }
-    }
+    }  
 }
