@@ -45,7 +45,7 @@ namespace HATE
         public Pointer(byte[] ptr, long loc) { Ptr = ptr; PtrLocation = loc; }
     }
 
-    partial class HATE
+    partial class MainForm
     {
         const int SearchAttempts = 2137420;
         const int WordSize = 4;
@@ -57,7 +57,7 @@ namespace HATE
 
             using (FileStream Data = new FileStream("./" + DataWin, FileMode.OpenOrCreate))
             {
-                DebugWriter.WriteLine("Opened " + DataWin + ".");
+                LogWriter.WriteLine("Opened " + DataWin + ".");
                 Data.Position = loc;
 
                 for (int i = 0; i < SearchAttempts; i++)
@@ -66,7 +66,7 @@ namespace HATE
 
                     if (ReadBuffer.Select((value, index) => value == ToFind[index]).All(x => x))
                     {
-                        DebugWriter.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
+                        LogWriter.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
 
                         Data.Position += WordSize;
 
@@ -74,23 +74,23 @@ namespace HATE
                         {
                             if (!Action(Data, shufflechance, header))
                             {
-                                DebugWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
+                                LogWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
                                 return false;
                             }
                         }
                         catch (Exception e)
                         {
-                            DebugWriter.Write("Exception Caught While Attempting To Modify " + header + " Memory Region. -> " + e);
+                            LogWriter.Write("Exception Caught While Attempting To Modify " + header + " Memory Region. -> " + e);
                             throw;
                         }
 
-                        DebugWriter.WriteLine(header + " Memory Region Modified Successfully.");
-                        DebugWriter.WriteLine("Closed " + DataWin + ".");
+                        LogWriter.WriteLine(header + " Memory Region Modified Successfully.");
+                        LogWriter.WriteLine("Closed " + DataWin + ".");
                         return true;
                     }
                 }
 
-                DebugWriter.WriteLine("Error: " + header + " Memory Region Not Found.");
+                LogWriter.WriteLine("Error: " + header + " Memory Region Not Found.");
             }
 
             return false;
@@ -118,7 +118,7 @@ namespace HATE
                 }
             }
 
-            DebugWriter.WriteLine("Added " + PointerList.Count + " pointers to " + header + " List.");
+            LogWriter.WriteLine("Added " + PointerList.Count + " pointers to " + header + " List.");
 
             PointerList.Shuffle(PointerSwapLoc);
 
@@ -128,7 +128,7 @@ namespace HATE
                 Data.Write(Ptr.Ptr, 0, WordSize);
             }
 
-            DebugWriter.WriteLine("Wrote " + PointerList.Count + " pointers to " + DataWin + ".");
+            LogWriter.WriteLine("Wrote " + PointerList.Count + " pointers to " + DataWin + ".");
 
             return true;
         }
@@ -167,7 +167,7 @@ namespace HATE
                     Data.Read(PointerBuffer, 0, 4);
                     PointerList.Add(new Pointer(PointerBuffer, Data.Position - 4));
                 }
-                DebugWriter.WriteLine("Added " + PointerNum + " sprite pointers to " + header + " List.");
+                LogWriter.WriteLine("Added " + PointerNum + " sprite pointers to " + header + " List.");
 
                 for (int i = 0; i < PointerNum - 1; i++)
                 {
@@ -198,7 +198,7 @@ namespace HATE
                         Data.Write(Enumerable.Repeat((byte)0, SpriteHitboxSize / 2 - 3).ToArray(), 0, SpriteHitboxSize / 2 - 3);
                     }
                 }
-                DebugWriter.WriteLine("Wrote " + PointerNum + " hitboxes to " + DataWin + ".");
+                LogWriter.WriteLine("Wrote " + PointerNum + " hitboxes to " + DataWin + ".");
 
                 return true;
             });
@@ -258,7 +258,7 @@ namespace HATE
                     }
                 }
 
-                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " sprite pointers to " + header + " List.");
+                LogWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " sprite pointers to " + header + " List.");
 
                 PointerList.Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
                 {
@@ -267,7 +267,7 @@ namespace HATE
                     RightPtr.PtrLocation = Tmp;
                 });
 
-                DebugWriter.WriteLine("Shuffled " + PointerList.Count + " sprite pointers.");
+                LogWriter.WriteLine("Shuffled " + PointerList.Count + " sprite pointers.");
 
                 Data.Position = PointerArrayBegin;
 
@@ -277,7 +277,7 @@ namespace HATE
                     Data.Write(PointerList[i].Ptr, 0, 4);
                 }
 
-                DebugWriter.WriteLine("Wrote " + PointerList.Count + " sprite pointers to " + DataWin + ".");
+                LogWriter.WriteLine("Wrote " + PointerList.Count + " sprite pointers to " + DataWin + ".");
 
                 return true;
             });
@@ -308,7 +308,7 @@ namespace HATE
                     }
                 }
 
-                DebugWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " string pointers to STRG List.");
+                LogWriter.WriteLine("Added " + PointerList.Count + " out of " + PointerNum + " string pointers to STRG List.");
 
                 for (int i = 0; i < PointerList.Count; i++)
                 {
@@ -341,7 +341,7 @@ namespace HATE
                     }
                 }
 
-                DebugWriter.WriteLine("Added " + StrPointerList.Count + " good string pointers to SprPointerList.");
+                LogWriter.WriteLine("Added " + StrPointerList.Count + " good string pointers to SprPointerList.");
 
                 Dictionary<string, List<Pointer>> StringDict = new Dictionary<string, List<Pointer>>();
                 int TotalStrings = 0;
@@ -362,7 +362,7 @@ namespace HATE
 
                 foreach (string ending in StringDict.Keys)
                 {
-                    DebugWriter.WriteLine("Added " + StringDict[ending].Count + " string pointers of ending " + ending + " to dialogue string List.");
+                    LogWriter.WriteLine("Added " + StringDict[ending].Count + " string pointers of ending " + ending + " to dialogue string List.");
 
                     StringDict[ending].Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
                     {
@@ -379,7 +379,7 @@ namespace HATE
                     }
                 }
 
-                DebugWriter.WriteLine("Wrote " + TotalStrings + " string pointers to " + DataWin + ".");
+                LogWriter.WriteLine("Wrote " + TotalStrings + " string pointers to " + DataWin + ".");
 
                 return true;
             });
@@ -414,7 +414,7 @@ namespace HATE
             while (n > 1)
             {
                 n--;
-                int k = HATE.RNG.Next(n + 1);
+                int k = MainForm.RNG.Next(n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -427,7 +427,7 @@ namespace HATE
             while (n > 1)
             {
                 n--;
-                int k = HATE.RNG.Next(n + 1);
+                int k = MainForm.RNG.Next(n + 1);
                 SwapFunc(list[n], list[k]);
             }
         }
@@ -438,9 +438,9 @@ namespace HATE
 
             for (int i = 0; i < ar.Count(); i++)
             {
-                if (((ar[i] > 47 && ar[i] < 58) || (ar[i] > 96 && ar[i] < 123) || (ar[i] > 64 && ar[i] < 91)) && (HATE.RNG.NextDouble() < chnc))
+                if (((ar[i] > 47 && ar[i] < 58) || (ar[i] > 96 && ar[i] < 123) || (ar[i] > 64 && ar[i] < 91)) && (MainForm.RNG.NextDouble() < chnc))
                 {
-                    a.Add((byte)(HATE.RNG.Next(75) + 47));
+                    a.Add((byte)(MainForm.RNG.Next(75) + 47));
                 }
                 else
                 {
