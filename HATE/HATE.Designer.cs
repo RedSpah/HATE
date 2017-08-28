@@ -186,7 +186,9 @@
             // 
             // textBox_Seed
             // 
+            this.textBox_Seed.BackColor = System.Drawing.Color.White;
             this.textBox_Seed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Seed.ForeColor = System.Drawing.Color.Black;
             this.textBox_Seed.Location = new System.Drawing.Point(67, 273);
             this.textBox_Seed.Name = "textBox_Seed";
             this.textBox_Seed.Size = new System.Drawing.Size(100, 20);
@@ -194,7 +196,9 @@
             // 
             // textBox_Power
             // 
+            this.textBox_Power.BackColor = System.Drawing.Color.White;
             this.textBox_Power.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Power.ForeColor = System.Drawing.Color.Black;
             this.textBox_Power.Location = new System.Drawing.Point(67, 299);
             this.textBox_Power.Name = "textBox_Power";
             this.textBox_Power.Size = new System.Drawing.Size(100, 20);
@@ -259,6 +263,7 @@
             this.Controls.Add(this.checkBox_ShuffleGFX);
             this.Controls.Add(this.checkBox_ShuffleText);
             this.Controls.Add(this.button_Corrupt);
+            this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;

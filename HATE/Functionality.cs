@@ -5,7 +5,7 @@ using System.IO;
 
 namespace HATE
 {
-    class StringPointer
+    public class StringPointer
     {
         public Pointer Base;
         public string Ending;
@@ -37,7 +37,7 @@ namespace HATE
         }
     }
 
-    class Pointer
+    public class Pointer
     {
         public byte[] Ptr;
         public long PtrLocation;
@@ -47,92 +47,87 @@ namespace HATE
 
     partial class HATE
     {
+        const int SearchAttempts = 2137420;
+        const int WordSize = 4;
+
         public bool LoadDataAndFind(string header, long loc, float shufflechance, Func<FileStream, float, string, bool> Action)
         {
             byte[] ToFind = header.ToCharArray().Select(x => (byte)x).ToArray();
             byte[] ReadBuffer = new byte[ToFind.Length];
-            FileStream Data = Safe.OpenFileStream("./" + DataWin);
-            if (Data == null) { return false; }
-            DebugWriter.WriteLine("Opened " + DataWin + ".");
-            Data.Position = loc;
 
-            for (int i = 0; i < 2137420; i++)
+            using (FileStream Data = new FileStream("./" + DataWin, FileMode.OpenOrCreate))
             {
-                Data.Read(ReadBuffer, 0, ToFind.Length);
+                DebugWriter.WriteLine("Opened " + DataWin + ".");
+                Data.Position = loc;
 
-                if (ReadBuffer.Select((value, index) => value == ToFind[index]).All(x => x))
+                for (int i = 0; i < SearchAttempts; i++)
                 {
-                    DebugWriter.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
+                    Data.Read(ReadBuffer, 0, ToFind.Length);
 
-                    Data.Position += 4;
-
-                    try
+                    if (ReadBuffer.Select((value, index) => value == ToFind[index]).All(x => x))
                     {
+                        DebugWriter.WriteLine(header + " Memory Region Found at " + Data.Position.ToString("X") + ".");
 
-                        if (!Action(Data, shufflechance, header))
+                        Data.Position += WordSize;
+
+                        try
                         {
-                            DebugWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
-
-                            Data.Close();
-                            return false;
+                            if (!Action(Data, shufflechance, header))
+                            {
+                                DebugWriter.WriteLine("An Error Occured While Attempting To Modify " + header + " Memory Region.");
+                                return false;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            DebugWriter.Write("Exception Caught While Attempting To Modify " + header + " Memory Region. -> " + e);
+                            throw;
                         }
 
+                        DebugWriter.WriteLine(header + " Memory Region Modified Successfully.");
+                        DebugWriter.WriteLine("Closed " + DataWin + ".");
+                        return true;
                     }
-                    catch (Exception e)
-                    {
-                        DebugWriter.Write("Exception Caught While Attempting To Modify " + header + " Memory Region. -> " + e);
-                        DebugWriter.Close();
-                        throw;
-                    }
-
-                    DebugWriter.WriteLine(header + " Memory Region Modified Successfully.");
-                    Data.Close();
-                    DebugWriter.WriteLine("Closed " + DataWin + ".");
-                    return true;
                 }
+
+                DebugWriter.WriteLine("Error: " + header + " Memory Region Not Found.");
             }
 
-            DebugWriter.WriteLine("Error: " + header + " Memory Region Not Found.");
-            Data.Close();
             return false;
         }
 
         public bool SimpleShuffle(FileStream Data, float shufflechance, string header)
         {
-            byte[] ReadBuffer = new byte[4];
+            byte[] ReadBuffer = new byte[WordSize];
             int PointerNum = 0;
             long PointerArrayBegin = 0;
             List<Pointer> PointerList = new List<Pointer>();
 
-            Data.Read(ReadBuffer, 0, 4);
+            Data.Read(ReadBuffer, 0, WordSize);
             PointerNum = BitConverter.ToInt32(ReadBuffer, 0);
             PointerArrayBegin = Data.Position;
 
             for (int i = 0; i < PointerNum; i++)
             {
+                Data.Position = PointerArrayBegin + i * WordSize;
+
                 if (RNG.NextDouble() < shufflechance)
                 {
-                    byte[] _tmp = new byte[4];
-                    Data.Read(_tmp, 0, 4);
-                    PointerList.Add(new Pointer(_tmp, Data.Position - 4));
+                    Data.Read(ReadBuffer, 0, WordSize);
+                    PointerList.Add(new Pointer(DeepCopy(ReadBuffer), Data.Position - WordSize));
                 }
             }
+
             DebugWriter.WriteLine("Added " + PointerList.Count + " pointers to " + header + " List.");
 
-            PointerList.Shuffle(delegate (Pointer LeftPtr, Pointer RightPtr)
-            {
-                long Tmp = LeftPtr.PtrLocation;
-                LeftPtr.PtrLocation = RightPtr.PtrLocation;
-                RightPtr.PtrLocation = Tmp;
-            });
+            PointerList.Shuffle(PointerSwapLoc);
 
-            Data.Position = PointerArrayBegin;
-
-            for (int i = 0; i < PointerList.Count; i++)
+            foreach (Pointer Ptr in PointerList)
             {
-                Data.Position = PointerList[i].PtrLocation;
-                Data.Write(PointerList[i].Ptr, 0, 4);
+                Data.Position = Ptr.PtrLocation;
+                Data.Write(Ptr.Ptr, 0, WordSize);
             }
+
             DebugWriter.WriteLine("Wrote " + PointerList.Count + " pointers to " + DataWin + ".");
 
             return true;
@@ -389,6 +384,26 @@ namespace HATE
                 return true;
             });
         }
+
+        public void PointerSwapLoc(Pointer lref, Pointer rref)
+        {
+            long tmp = lref.PtrLocation;
+            lref.PtrLocation = rref.PtrLocation;
+            rref.PtrLocation = tmp;
+        }
+
+        public T[] DeepCopy<T>(T[] Array) where T : struct
+        {
+            T[] tmp = new T[Array.Length];
+
+            for (int i = 0; i < Array.Length; i++)
+            {
+                tmp[i] = Array[i];
+            }
+
+            return tmp;
+        }
+
     }
 
     public static class Ext

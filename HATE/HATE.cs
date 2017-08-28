@@ -99,11 +99,22 @@ namespace HATE
 
             PlatformID OS = Environment.OSVersion.Platform;
 
-            if (OS == PlatformID.MacOSX || OS == PlatformID.Unix)
+            // TextWriter _tmp = new StreamWriter("_test.txt");
+            //MessageBox.Show(((int)OS).ToString());
+            //_tmp.Close();
+
+            if (!File.Exists("./" + DataWin))
             {
-                DataWin = "game.ios";
-                RunUTScript = "Undertale.sh";
+                if (File.Exists("./game.ios"))
+                {
+                    DataWin = "game.ios";
+                }
+                else if (File.Exists("./Game.unx"))
+                {
+                    DataWin = "game.unx";
+                }
             }
+
         }
 
         public bool Setup()
@@ -113,6 +124,8 @@ namespace HATE
             int Seed = 0;
             FriskMode = false;
             byte Power = 0;
+
+            if (File.Exists("./" + DataWin))
 
             if (!byte.TryParse(textBox_Power.Text, out Power))
             {
