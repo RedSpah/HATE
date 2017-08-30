@@ -9,52 +9,61 @@ namespace HATE
 {
     public partial class MainForm : Form
     {
-        public static class Style
+        private static class Style
         {
-            public readonly static Color OptionSet = Color.Yellow;
-            public readonly static Color OptionUnset = Color.White;
-            public static Color GetOptionColor(bool b) { return b ? OptionSet : OptionUnset; }
+            private static readonly Color _btnRestoreColor = Color.LimeGreen;
+            private static readonly Color _btnCorruptColor = Color.Coral;
+            private static readonly string _btnRestoreLabel = " -RESTORE- ";
+            private static readonly string _btnCorruptLabel = " -CORRUPT- ";
+            private static readonly Color _optionSet = Color.Yellow;
+            private static readonly Color _optionUnset = Color.White;
+            
+            public static Color GetOptionColor(bool b) { return b ? _optionSet : _optionUnset; }
+            public static Color GetCorruptColor(bool b) { return b ? _btnCorruptColor : _btnRestoreColor; }
+            public static string GetCorruptLabel(bool b) { return b ? _btnCorruptLabel : _btnRestoreLabel; }
         }
 
-        public StreamWriter LogWriter;
+        private StreamWriter _logWriter;
 
-        public Random RNG;
-        public bool ShuffleGFX = false;
-        public bool ShuffleText = false;
-        public bool HitboxFix = false;
-        public bool ShuffleFont = false;
-        public bool ShuffleBG = false;
-        public bool ShuffleAudio = false;
-        public bool Corrupt = false;
-        public bool ShowSeed = false;
-        public bool FriskMode = false;
-        public float TruePower = 0;
-        public string DefaultPowerText = "0 - 255";
-        public string DataWin = "data.win";
-        public string RunUTScript = "Undertale.bat";
+        
+        private bool _shuffleGFX = false;
+        private bool _shuffleText = false;
+        private bool _hitboxFix = false;
+        private bool _shuffleFont = false;
+        private bool _shuffleBG = false;
+        private bool _shuffleAudio = false;
+        private bool _corrupt = false;
+        private bool _showSeed = false;
+        private bool _friskMode = false;
+        private float _truePower = 0;
+        private readonly string _defaultPowerText = "0 - 255";
+        private readonly string _dataWin = "data.win";
+        private readonly string _runUtScript = "Undertale.bat";
 
-        public string[] FriskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
+        private readonly string[] _friskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
+
+        private static readonly DateTime _unixTimeZero = new DateTime(1970, 1, 1);
+        private Random _random;
 
         public MainForm()
         {
-            try
-            {
-                LogWriter = new StreamWriter("HATE.log");
-            }
-            catch (Exception) { MessageBox.Show("Could not set up the log file."); }
-
             InitializeComponent();
+
+            
+
+            _random = new Random();
+            
             UpdateCorrupt();
 
-            if (!File.Exists("./" + DataWin))
+            if (!File.Exists("./" + _dataWin))
             {
                 if (File.Exists("./game.ios"))
                 {
-                    DataWin = "game.ios";
+                    _dataWin = "game.ios";
                 }
                 else if (File.Exists("./game.unx"))
                 {
-                    DataWin = "game.unx";
+                    _dataWin = "game.unx";
                 }
             }
         }
@@ -63,46 +72,55 @@ namespace HATE
 
         private void btnLaunch_Clicked(object sender, EventArgs e)
         {
-            if (!File.Exists(RunUTScript))
+            if (!File.Exists(_runUtScript))
             {
-                MessageBox.Show($"ERROR: {RunUTScript} is not present in the folder. It will not be possible to launch Undertale from HATE without it present.");
+                MessageBox.Show($"ERROR: {_runUtScript} is not present in the folder. It will not be possible to launch Undertale from HATE without it present.");
                 return;
             }
 
-            SetInput(false);
-            ProcessStartInfo UTScript = new ProcessStartInfo(RunUTScript, "test");
-            UTScript.UseShellExecute = false;
-            UTScript.RedirectStandardOutput = true;
-            Process UTProcess = Process.Start(UTScript);
-            string Output = UTProcess.StandardOutput.ReadToEnd();
-            UTProcess.WaitForExit();
-            SetInput(true);
-            Console.WriteLine(Output);
+            EnableControls(false);
+
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(_runUtScript, "test")
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+
+            string output;
+            using (Process scriptProcess = Process.Start(processStartInfo))
+            {
+                output = scriptProcess.StandardOutput.ReadToEnd();
+                scriptProcess.WaitForExit();
+            }
+                    
+            EnableControls(true);
+            _logWriter.WriteLine(output);
         }
 
         private void button_Corrupt_Clicked(object sender, EventArgs e)
         {
-            
+            EnableControls(false);
 
-           
+            try
+            {
+                _logWriter = new StreamWriter("HATE.log", true);
+            }
+            catch (Exception) { MessageBox.Show("Could not set up the log file."); }
 
+            if (!Setup()) { goto End; };
+            if (_hitboxFix && !HitboxFix_Func(_random, _truePower, _logWriter)) { goto End; }
+            if (_shuffleGFX && !ShuffleGFX_Func(_random, _truePower, _logWriter)) { goto End; }
+            if (_shuffleText && !ShuffleText_Func(_random, _truePower, _logWriter)) { goto End; }
+            if (_shuffleFont && !ShuffleFont_Func(_random, _truePower, _logWriter)) { goto End; }
+            if (_shuffleBG && !ShuffleBG_Func(_random, _truePower, _logWriter)) { goto End; }
+            if (_shuffleAudio && !ShuffleAudio_Func(_random, _truePower, _logWriter)) { goto End; }
 
-                SetInput(false);
-                if (!Setup()) { goto End; };
-                if (HitboxFix && !HitboxFix_Func(RNG, TruePower)) { goto End; }
-                if (ShuffleGFX && !ShuffleGFX_Func(RNG, TruePower)) { goto End; }
-                if (ShuffleText && !ShuffleText_Func(RNG, TruePower)) { goto End; }
-                if (ShuffleFont && !ShuffleFont_Func(RNG, TruePower)) { goto End; }
-                if (ShuffleBG && !ShuffleBG_Func(RNG, TruePower)) { goto End; }
-                if (ShuffleAudio && !ShuffleAudio_Func(RNG, TruePower)) { goto End; }
-
-                End:
-                LogWriter.Close();
-                SetInput(true);
-            
+            End:
+            _logWriter.Close();
+            EnableControls(true);
         }
 
-        public void SetInput(bool state)
+        public void EnableControls(bool state)
         {
             btnCorrupt.Enabled = state;
             btnLaunch.Enabled = state;
@@ -119,61 +137,60 @@ namespace HATE
             txtSeed.Enabled = state;
         }
 
-        public void UpdateCorrupt()
-        {
-            Corrupt = ShuffleGFX || ShuffleText || HitboxFix || ShuffleFont || ShuffleAudio || ShuffleBG;
-            btnCorrupt.Text = Corrupt ? " -CORRUPT- " : " -RESTORE- ";
-            btnCorrupt.ForeColor = Corrupt ? Color.Coral : Color.LimeGreen;
-        }
 
-        
 
         public bool Setup()
         {
+            _logWriter.WriteLine("-------------- Session at: " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n");
 
             /** SEED PARSING AND RNG SETUP **/
-            int Seed = 0;
-            FriskMode = false;
-            byte Power = 0;
+            _friskMode = false;
+            byte power = 0;
 
-            if (File.Exists("./" + DataWin))
-
-            if (!byte.TryParse(txtPower.Text, out Power))
+            if (!byte.TryParse(txtPower.Text, out power))
             {
                 MessageBox.Show("Please set Power to a number between 0 and 255 and try again.");
                 return false;
             }
 
-            TruePower = (float)Power / 255;
+            _truePower = (float)power / 255;
 
-            if (txtSeed.Text == "")
+            int timeSeed = 0;
+            string seed = txtSeed.Text.Trim();
+            bool textSeed = false;
+
+            if (seed == "")
             {
-                RNG = new Random((int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
-                if (ShowSeed)
+                timeSeed = (int)DateTime.Now.Subtract(_unixTimeZero).TotalSeconds;
+
+                if (_showSeed)
                 {
-                    LogWriter.WriteLine("Time seed - " + ((int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString());
-                    txtSeed.Text = "#" + ((int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString();
+                    txtSeed.Text = $"#{timeSeed}";
                 }
             }
-            else if (txtSeed.Text[0] == '#' && int.TryParse(txtSeed.Text.Substring(1), out Seed))
+            else if (txtSeed.Text[0] == '#' && int.TryParse(txtSeed.Text.Substring(1), out int tmpSeed))
             {
-                LogWriter.WriteLine("# seed - " + Seed.ToString());
-                RNG = new Random(Seed);
+                timeSeed = tmpSeed;
+                _logWriter.WriteLine("# seed - " + tmpSeed);
             }
             else if (txtSeed.Text.ToUpper() == "FRISK")
             {
-                FriskMode = true;
-                LogWriter.WriteLine("Time seed - " + ((int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString());
-                RNG = new Random((int)DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+                _friskMode = true;
             }
             else
             {
-                LogWriter.WriteLine("Text seed - " + txtSeed.Text.GetHashCode());
-                RNG = new Random(txtSeed.Text.GetHashCode());
+                _logWriter.WriteLine("Text seed - " + txtSeed.Text.GetHashCode());
+                _random = new Random(txtSeed.Text.GetHashCode());
+                textSeed = true;
             }
 
-            LogWriter.WriteLine("Power - " + Power);
-            LogWriter.WriteLine("TruePower - " + TruePower);
+            if (!textSeed)
+            {
+                _random = new Random(timeSeed);
+                _logWriter.WriteLine("Time seed - " + timeSeed);
+                _logWriter.WriteLine("Power - " + power);
+                _logWriter.WriteLine("TruePower - " + _truePower);
+            }   
 
             /** ENVIRONMENTAL CHECKS **/
 
@@ -183,98 +200,90 @@ namespace HATE
                 return false;
             }
 
-            if (!File.Exists("./" + DataWin))
+            if (!File.Exists("./" + _dataWin))
             {
-                MessageBox.Show($"You seem to be missing your resource file, {DataWin}. Make sure you've placed HATE.exe in the proper location.");
+                MessageBox.Show($"You seem to be missing your resource file, {_dataWin}. Make sure you've placed HATE.exe in the proper location.");
                 return false;
             }
 
             else if (!Directory.Exists("./Data"))
             {
-                if (!Safe.CreateDirectory("./Data"))
-                {
-                    return false;
-                }
-
-                if (!Safe.CopyFile("./" + DataWin, "./Data/" + DataWin))
-                {
-                    return false;
-                }
+                if (!Safe.CreateDirectory("./Data")) { return false; }
+                if (!Safe.CopyFile("./" + _dataWin, "./Data/" + _dataWin)) { return false; }
             }
 
-            if (!Safe.DeleteFile("./" + DataWin))
-            {
-                return false;
-
-            }
-            LogWriter.WriteLine("Deleted " + DataWin + ".");
-            if (!Safe.CopyFile("./Data/" + DataWin, "./" + DataWin))
-            {
-                return false;
-
-            }
-            LogWriter.WriteLine("Copied " + DataWin + ".");
+            if (!Safe.DeleteFile("./" + _dataWin)) { return false; }
+            _logWriter.WriteLine("Deleted " + _dataWin + ".");
+            if (!Safe.CopyFile("./Data/" + _dataWin, "./" + _dataWin)) { return false; }
+            _logWriter.WriteLine("Copied " + _dataWin + ".");
             return true;
         }
 
 
 
+        public void UpdateCorrupt()
+        {
+            _corrupt = _shuffleGFX || _shuffleText || _hitboxFix || _shuffleFont || _shuffleAudio || _shuffleBG;
+            btnCorrupt.Text = Style.GetCorruptLabel(_corrupt);
+            btnCorrupt.ForeColor = Style.GetCorruptColor(_corrupt);
+        }
+
         private void chbShuffleText_CheckedChanged(object sender, EventArgs e)
         {
-            ShuffleText = chbShuffleText.Checked;
-            chbShuffleText.ForeColor = Style.GetOptionColor(ShuffleText);
+            _shuffleText = chbShuffleText.Checked;
+            chbShuffleText.ForeColor = Style.GetOptionColor(_shuffleText);
             UpdateCorrupt();
         }
 
         private void chbShuffleGFX_CheckedChanged(object sender, EventArgs e)
         {
-            ShuffleGFX = chbShuffleGFX.Checked;
-            chbShuffleGFX.ForeColor = Style.GetOptionColor(ShuffleGFX);
+            _shuffleGFX = chbShuffleGFX.Checked;
+            chbShuffleGFX.ForeColor = Style.GetOptionColor(_shuffleGFX);
             UpdateCorrupt();
         }
 
         private void chbHitboxFix_CheckedChanged(object sender, EventArgs e)
         {
-            HitboxFix = chbHitboxFix.Checked;
-            chbHitboxFix.ForeColor = Style.GetOptionColor(HitboxFix);
+            _hitboxFix = chbHitboxFix.Checked;
+            chbHitboxFix.ForeColor = Style.GetOptionColor(_hitboxFix);
             UpdateCorrupt();
         }
 
         private void chbShuffleFont_CheckedChanged(object sender, EventArgs e)
         {
-            ShuffleFont = chbShuffleFont.Checked;
-            chbShuffleFont.ForeColor = Style.GetOptionColor(ShuffleFont);
+            _shuffleFont = chbShuffleFont.Checked;
+            chbShuffleFont.ForeColor = Style.GetOptionColor(_shuffleFont);
             UpdateCorrupt();
         }
 
         private void chbShuffleBG_CheckedChanged(object sender, EventArgs e)
         {
-            ShuffleBG = chbShuffleBG.Checked;
-            chbShuffleBG.ForeColor = Style.GetOptionColor(ShuffleBG);
+            _shuffleBG = chbShuffleBG.Checked;
+            chbShuffleBG.ForeColor = Style.GetOptionColor(_shuffleBG);
             UpdateCorrupt();
         }
 
         private void chbShuffleAudio_CheckedChanged(object sender, EventArgs e)
         {
-            ShuffleAudio = chbShuffleAudio.Checked;
-            chbShuffleAudio.ForeColor = Style.GetOptionColor(ShuffleAudio);
+            _shuffleAudio = chbShuffleAudio.Checked;
+            chbShuffleAudio.ForeColor = Style.GetOptionColor(_shuffleAudio);
             UpdateCorrupt();
         }
 
         private void chbShowSeed_CheckedChanged(object sender, EventArgs e)
         {
-            ShowSeed = chbShowSeed.Checked;
-            chbShowSeed.ForeColor = Style.GetOptionColor(ShowSeed);
+            _showSeed = chbShowSeed.Checked;
+            chbShowSeed.ForeColor = Style.GetOptionColor(_showSeed);
         }
 
         private void txtPower_Enter(object sender, EventArgs e)
         {
-            txtPower.Text = (txtPower.Text == DefaultPowerText) ? "" : txtPower.Text;
+            txtPower.Text = (txtPower.Text == _defaultPowerText) ? "" : txtPower.Text;
         }
 
         private void txtPower_Leave(object sender, EventArgs e)
         {
-            txtPower.Text = (txtPower.Text == "") ? DefaultPowerText : txtPower.Text;
+            txtPower.Text = (txtPower.Text == "") ? _defaultPowerText : txtPower.Text;
         }
 
         private void btnBrowse_Clicked(object sender, EventArgs e)
