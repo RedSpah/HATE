@@ -193,49 +193,27 @@ namespace HATE
             /** SEED PARSING AND RNG SETUP **/
             _friskMode = false;
             byte power = 0;
+            _random = new Random();
+            int timeSeed = (int)DateTime.Now.Subtract(_unixTimeZero).TotalSeconds;
 
             if (!byte.TryParse(txtPower.Text, out power))
             {
                 MessageBox.Show("Please set Power to a number between 0 and 255 and try again.");
                 return false;
             }
-
             _truePower = (float)power / 255;
 
-            int timeSeed = 0;
-            string seed = txtSeed.Text.Trim();
-            bool textSeed = false;
-
-            if (seed == "")
-            {
-                timeSeed = (int)DateTime.Now.Subtract(_unixTimeZero).TotalSeconds;
-
-                if (_showSeed)
-                    txtSeed.Text = $"#{timeSeed}";
-            }
-            else if (txtSeed.Text[0] == '#' && int.TryParse(txtSeed.Text.Substring(1), out int tmpSeed))
-            {
-                timeSeed = tmpSeed;
-                _logWriter.WriteLine($"# seed - {tmpSeed}");
-            }
-            else if (txtSeed.Text.ToUpper() == "FRISK" && !File.Exists("DELTARUNE.exe"))
-            {
+            if (txtSeed.Text.ToUpper() == "FRISK" && !File.Exists("DELTARUNE.exe"))
                 _friskMode = true;
-            }
-            else
-            {
-                _logWriter.WriteLine($"Text seed - {txtSeed.Text.GetHashCode()}");
-                _random = new Random(txtSeed.Text.GetHashCode());
-                textSeed = true;
-            }
 
-            if (!textSeed)
-            {
-                _random = new Random(timeSeed);
-                _logWriter.WriteLine($"Time seed - {timeSeed}");
-                _logWriter.WriteLine($"Power - {power}");
-                _logWriter.WriteLine($"TruePower - {_truePower}");
-            }
+            if (_showSeed)
+                txtSeed.Text = $"#{timeSeed}";
+            else
+                txtSeed.Text = "";
+
+            _logWriter.WriteLine($"Time seed - {timeSeed}");
+            _logWriter.WriteLine($"Power - {power}");
+            _logWriter.WriteLine($"TruePower - {_truePower}");
 
             /** ENVIRONMENTAL CHECKS **/
             if (File.Exists("UNDERTALE.exe") && !File.Exists("./mus_barrier.ogg"))
