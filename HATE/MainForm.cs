@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using Optional;
+using System.Security.Principal;
 
 namespace HATE
 {
@@ -24,7 +24,6 @@ namespace HATE
         }
 
         private StreamWriter _logWriter;
-
         
         private bool _shuffleGFX = false;
         private bool _shuffleText = false;
@@ -38,7 +37,6 @@ namespace HATE
         private float _truePower = 0;
         private readonly string _defaultPowerText = "0 - 255";
         private readonly string _dataWin = "data.win";
-        private readonly string _runUtScript = "Undertale.bat";
 
         private readonly string[] _friskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
 
@@ -49,62 +47,113 @@ namespace HATE
         {
             InitializeComponent();
 
+            if (!File.Exists(_dataWin))
+            {
+                if (File.Exists("game.ios"))
+                    _dataWin = "game.ios";
+                else if (File.Exists("game.unx"))
+                    _dataWin = "game.unx";
+            }
+
+            if (File.Exists("DELTARUNE.exe") || File.Exists("../../SURVEY_PROGRAM.app")) { lblGameName.Text = "Deltarune"; }
+            else if (File.Exists("UNDERTALE.exe") || File.Exists("../../UNDERTALE.app")) { } //Do nothing
+            else
+            {
+                lblGameName.Text = GetGame().Replace(".exe", "");
+                if (!string.IsNullOrWhiteSpace(lblGameName.Text))
+                {
+                    MessageBox.Show($"We couldn't find Deltarune or Undertale in this folder, if you're using this for another game then as long there is a {_dataWin} file and the game was made with GameMaker then this program should work but their is no guarantees that it will", "HATE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    MessageBox.Show("We couldn't find any game in this folder, check that this is in the right folder.");
+                    Close();
+                }
+            }
             
+            //This is so it doesn't keep starting the program over and over in case something messes up
+            if (Process.GetProcessesByName("HATE").Length == 1)
+            {
+                if (Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) || Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)) && !IsElevated)
+                {
+                    DialogResult dialogResult = MessageBox.Show($"The game is in a system protected folder and we need elevated permissions in order to mess with {_dataWin}, Do you allow us to get elevated permissions (if you press no this will just close the program as we can't do anything)", "HATE", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        // Restart program and run as admin
+                        var exeName = Process.GetCurrentProcess().MainModule.FileName;
+                        ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
+                        startInfo.Arguments = "true";
+                        startInfo.Verb = "runas";
+                        Process.Start(startInfo);
+                        Close();
+                    }
+                    else
+                    {
+                        Close();
+                    }
+                }
+            }
 
             _random = new Random();
             
             UpdateCorrupt();
+        }
 
-            if (!File.Exists("./" + _dataWin))
+        public bool IsElevated
+        {
+            get
             {
-                if (File.Exists("./game.ios"))
-                {
-                    _dataWin = "game.ios";
-                }
-                else if (File.Exists("./game.unx"))
-                {
-                    _dataWin = "game.unx";
-                }
+                return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
 
+        public string GetGame()
+        {
+            if (File.Exists("DELTARUNE.exe")) { return $"{LinuxWine()} DELTARUNE.exe"; }
+            else if (File.Exists("../../SURVEY_PROGRAM.app")) { return "../../SURVEY_PROGRAM.app"; }
+            else if (File.Exists("UNDERTALE.exe")) { return $"{LinuxWine()} UNDERTALE.exe"; }
+            else if (File.Exists("../../UNDERTALE.app")) { return "../../UNDERTALE.app"; }
+            else
+            {
+                var files = Directory.EnumerateFiles(Directory.GetCurrentDirectory());
+                foreach (string s in files)
+                    if (!s.Remove(0, s.LastIndexOf("\\") + 1).Contains("HATE.exe") && s.Contains(".exe") || s.Contains(".app"))
+                        return s.Remove(0, s.LastIndexOf("\\") + 1);
 
+                return "";
+            }
+        }
+
+        public string LinuxWine()
+        {
+            PlatformID pid = (Environment.OSVersion).Platform;
+            switch (pid)
+            {
+                case PlatformID.Unix:
+                    return "wine";
+            }
+            return "";
+        }
 
         private void btnLaunch_Clicked(object sender, EventArgs e)
         {
-            if (!File.Exists(_runUtScript))
-            {
-                MessageBox.Show($"ERROR: {_runUtScript} is not present in the folder. It will not be possible to launch Undertale from HATE without it present.");
-                return;
-            }
-
             EnableControls(false);
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(_runUtScript, "test")
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(GetGame())
             {
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             };
 
-            string output;
-            using (Process scriptProcess = Process.Start(processStartInfo))
-            {
-                output = scriptProcess.StandardOutput.ReadToEnd();
-                scriptProcess.WaitForExit();
-            }
-                    
+            Process.Start(processStartInfo);
             EnableControls(true);
-            _logWriter.WriteLine(output);
         }
 
         private void button_Corrupt_Clicked(object sender, EventArgs e)
         {
             EnableControls(false);
 
-            try
-            {
-                _logWriter = new StreamWriter("HATE.log", true);
-            }
+            try { _logWriter = new StreamWriter("HATE.log", true); }
             catch (Exception) { MessageBox.Show("Could not set up the log file."); }
 
             if (!Setup()) { goto End; };
@@ -137,8 +186,6 @@ namespace HATE
             txtSeed.Enabled = state;
         }
 
-
-
         public bool Setup()
         {
             _logWriter.WriteLine("-------------- Session at: " + DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n");
@@ -164,22 +211,20 @@ namespace HATE
                 timeSeed = (int)DateTime.Now.Subtract(_unixTimeZero).TotalSeconds;
 
                 if (_showSeed)
-                {
                     txtSeed.Text = $"#{timeSeed}";
-                }
             }
             else if (txtSeed.Text[0] == '#' && int.TryParse(txtSeed.Text.Substring(1), out int tmpSeed))
             {
                 timeSeed = tmpSeed;
-                _logWriter.WriteLine("# seed - " + tmpSeed);
+                _logWriter.WriteLine($"# seed - {tmpSeed}");
             }
-            else if (txtSeed.Text.ToUpper() == "FRISK")
+            else if (txtSeed.Text.ToUpper() == "FRISK" && !File.Exists("DELTARUNE.exe"))
             {
                 _friskMode = true;
             }
             else
             {
-                _logWriter.WriteLine("Text seed - " + txtSeed.Text.GetHashCode());
+                _logWriter.WriteLine($"Text seed - {txtSeed.Text.GetHashCode()}");
                 _random = new Random(txtSeed.Text.GetHashCode());
                 textSeed = true;
             }
@@ -187,40 +232,36 @@ namespace HATE
             if (!textSeed)
             {
                 _random = new Random(timeSeed);
-                _logWriter.WriteLine("Time seed - " + timeSeed);
-                _logWriter.WriteLine("Power - " + power);
-                _logWriter.WriteLine("TruePower - " + _truePower);
-            }   
+                _logWriter.WriteLine($"Time seed - {timeSeed}");
+                _logWriter.WriteLine($"Power - {power}");
+                _logWriter.WriteLine($"TruePower - {_truePower}");
+            }
 
             /** ENVIRONMENTAL CHECKS **/
-
-            if (!File.Exists("./mus_barrier.ogg"))
+            if (File.Exists("UNDERTALE.exe") && !File.Exists("./mus_barrier.ogg"))
             {
-                MessageBox.Show("ERROR:\nIt seems you've either placed HATE.exe in the wrong location or are using an old version of the game. Solutions to both problems are given in the README.txt file included in the download.");
+                MessageBox.Show("ERROR:\nIt seems you've either placed HATE.exe in the wrong location or are using an old version of Undertale. Solutions to both problems are given in the README.txt file included in the download.");
                 return false;
             }
 
-            if (!File.Exists("./" + _dataWin))
+            if (!File.Exists(_dataWin))
             {
                 MessageBox.Show($"You seem to be missing your resource file, {_dataWin}. Make sure you've placed HATE.exe in the proper location.");
                 return false;
             }
-
-            else if (!Directory.Exists("./Data"))
+            else if (!Directory.Exists("Data"))
             {
-                if (!Safe.CreateDirectory("./Data")) { return false; }
-                if (!Safe.CopyFile("./" + _dataWin, "./Data/" + _dataWin)) { return false; }
+                if (!Safe.CreateDirectory("Data")) { return false; }
+                if (!Safe.CopyFile(_dataWin, $"Data/{_dataWin}")) { return false; }
             }
 
-            if (!Safe.DeleteFile("./" + _dataWin)) { return false; }
-            _logWriter.WriteLine("Deleted " + _dataWin + ".");
-            if (!Safe.CopyFile("./Data/" + _dataWin, "./" + _dataWin)) { return false; }
-            _logWriter.WriteLine("Copied " + _dataWin + ".");
+            if (!Safe.DeleteFile(_dataWin)) { return false; }
+            _logWriter.WriteLine($"Deleted {_dataWin}.");
+            if (!Safe.CopyFile($"Data/{_dataWin}", _dataWin)) { return false; }
+            _logWriter.WriteLine($"Copied {_dataWin}.");
             return true;
         }
-
-
-
+        
         public void UpdateCorrupt()
         {
             _corrupt = _shuffleGFX || _shuffleText || _hitboxFix || _shuffleFont || _shuffleAudio || _shuffleBG;
@@ -283,12 +324,7 @@ namespace HATE
 
         private void txtPower_Leave(object sender, EventArgs e)
         {
-            txtPower.Text = (txtPower.Text == "") ? _defaultPowerText : txtPower.Text;
-        }
-
-        private void btnBrowse_Clicked(object sender, EventArgs e)
-        {
-
+            txtPower.Text = string.IsNullOrWhiteSpace(txtPower.Text) ? _defaultPowerText : txtPower.Text;
         }
     }
 }
