@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace HATE
@@ -15,15 +13,13 @@ namespace HATE
         public static bool LoadDataAndFind(string seeked_header, Random random, float shufflechance, StreamWriter logstream, string resource_file, Func<FileStream, Random, float, string, StreamWriter, bool> shufflefunc)
         {
             if (random == null)
-            {
                 throw new ArgumentNullException(nameof(random));
-            }
 
             byte[] readBuffer = new byte[WordSize];
 
             using (FileStream stream = new FileStream(resource_file, FileMode.OpenOrCreate))
             {
-                logstream.WriteLine("Opened " + resource_file + ".");
+                logstream.WriteLine($"Opened {resource_file}.");
                 stream.Position = 8;
 
                 int dataSegmentCounter = 0;
@@ -36,7 +32,7 @@ namespace HATE
 
                     if (headerName == seeked_header)
                     {
-                        logstream.WriteLine(seeked_header + " Memory Region Found at " + stream.Position.ToString("X") + ".");
+                        logstream.WriteLine($"{seeked_header} Memory Region Found at {stream.Position.ToString("X")}.");
 
                         stream.Position += WordSize;
 
@@ -44,18 +40,18 @@ namespace HATE
                         {
                             if (!shufflefunc(stream, random, shufflechance, seeked_header, logstream))
                             {
-                                logstream.WriteLine("An Error Occured While Attempting To Modify " + seeked_header + " Memory Region.");
+                                logstream.WriteLine($"An Error Occured While Attempting To Modify {seeked_header} Memory Region.");
                                 return false;
                             }
                         }
                         catch (Exception e)
                         {
-                            logstream.Write("Exception Caught While Attempting To Modify " + seeked_header + " Memory Region. -> " + e);
+                            logstream.Write($"Exception Caught While Attempting To Modify {seeked_header} Memory Region. -> {e}");
                             throw;
                         }
 
-                        logstream.WriteLine(seeked_header + " Memory Region Modified Successfully.");
-                        logstream.WriteLine("Closed " + resource_file + ".");
+                        logstream.WriteLine($"{seeked_header} Memory Region Modified Successfully.");
+                        logstream.WriteLine($"Closed {resource_file}.");
                         return true;
                     }
 
@@ -63,15 +59,11 @@ namespace HATE
                     stream.Position += BitConverter.ToInt32(readBuffer, 0);
                 }
 
-                logstream.WriteLine("Could not find " + seeked_header + "Memory Region.");
-
+                logstream.WriteLine($"Could not find {seeked_header} Memory Region.");
             }
-
             return false;
         }
-
-
-
+        
         enum ComplexShuffleStep : byte { Accumulation, FirstLog, Shuffling, SecondLog, Writing, ThirdLog }
 
         public static Func<FileStream, Random, float, string, StreamWriter, bool> ComplexShuffle(
@@ -87,19 +79,19 @@ namespace HATE
                 {
                     List<ResourcePointer> pointerList = accumulator(stream, random, chance, logstream);
                     step = ComplexShuffleStep.FirstLog;
-                    logstream.WriteLine("Added " + pointerList.Count + " pointers to " + header + " List.");
+                    logstream.WriteLine($"Added {pointerList.Count} pointers to {header} List.");
                     step = ComplexShuffleStep.Shuffling;
                     pointerList = shuffler(stream, random, chance, logstream, pointerList);
                     step = ComplexShuffleStep.SecondLog;
-                    logstream.WriteLine("Shuffled " + pointerList.Count + " pointers to " + header + " List.");
+                    logstream.WriteLine($"Shuffled {pointerList.Count} pointers to {header} List.");
                     step = ComplexShuffleStep.Writing;
                     success = writer(stream, random, chance, logstream, pointerList);
                     step = ComplexShuffleStep.ThirdLog;
-                    logstream.WriteLine("Written " + pointerList.Count + " shuffled pointers to " + header + " List.");
+                    logstream.WriteLine($"Written {pointerList.Count} shuffled pointers to {header} List.");
                 }
                 catch (Exception ex)
                 {
-                    logstream.WriteLine($"Caught exception [{ex.ToString()}] while editing {header} memory block, during step {step.ToString()}.");
+                    logstream.WriteLine($"Caught exception [{ex}] while editing {header} memory block, during step {step}.");
                     throw;
                 }
 
@@ -121,9 +113,7 @@ namespace HATE
                 stream.Read(readBuffer, 0, WordSize);
 
                 if (random.NextDouble() < shufflechance)
-                {
                     pointerList.Add(new ResourcePointer(BitConverter.ToInt32(readBuffer, 0), (int)(stream.Position - WordSize)));
-                }
             }
 
             return pointerList;
@@ -145,9 +135,7 @@ namespace HATE
             return true;
         }
 
-
         public static Func<FileStream, Random, float, string, StreamWriter, bool> SimpleShuffle = ComplexShuffle(SimpleAccumulator, SimpleShuffler, SimpleWriter);
-
 
         public static void PointerSwapLoc(ResourcePointer lref, ResourcePointer rref)
         {
@@ -155,6 +143,5 @@ namespace HATE
             lref.Location = rref.Location;
             rref.Location = tmp;
         }
-
     }
 }

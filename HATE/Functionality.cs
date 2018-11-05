@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Windows.Forms;
 
 namespace HATE
 {
@@ -24,13 +23,9 @@ namespace HATE
                 char C = str[str.Length - i];
 
                 if (FormatChars.Contains(C))
-                {
                     Ending.Add(C);
-                }
                 else
-                {
                     break;
-                }
             }
 
             Ending.Reverse();
@@ -80,9 +75,6 @@ namespace HATE
             return Shuffle.LoadDataAndFind("STRG", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, ShuffleText_Shuffler, Shuffle.SimpleWriter));
         }
 
-
-
-
         // TODO: clean this
         public List<ResourcePointer> ShuffleGFX_Accumulator(FileStream stream, Random random, float shufflechance, StreamWriter logstream)
         {
@@ -115,28 +107,22 @@ namespace HATE
                         byteString.Add((byte)stream.ReadByte());
 
                         if (byteString[byteString.Count - 1] == 0 && stringBegun)
-                        {
                             break;
-                        }
 
                         if (byteString[byteString.Count - 1] != 0)
-                        {
                             stringBegun = true;
-                        }
                     }
 
                     string convertedString = new string(byteString.Where(x => x == '_' || (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'Z') || (x >= '0' && x <= '9')).Select(x => (char)x).ToArray());
 
                     if (!_friskSpriteHandles.Contains(convertedString.Trim()) || _friskMode)
-                    {
                         pointerList.Add(ptr);
-                    }
 
                     stream.Position = pos;
                 }
             }
 
-            logstream.WriteLine("Added " + pointerList.Count + " out of " + pointerNum + " sprite pointers to SPRT List.");
+            logstream.WriteLine($"Added {pointerList.Count} out of {pointerNum} sprite pointers to SPRT List.");
 
             return pointerList;
         }
@@ -148,12 +134,12 @@ namespace HATE
             {
                 // Previous implementation of HitboxFix didn't work at all and was unsafe to boot, better implementation will be added later.
             }
-            logstream.WriteLine("Wrote " + pointerlist.Count + " hitboxes to " + _dataWin + ".");
+            logstream.WriteLine($"Wrote {pointerlist.Count} hitboxes to {_dataWin}.");
 
             return pointerlist;
         }
 
-        // TODO: delet this
+        // TODO: delete this
         // TODO: clean this
         public List<ResourcePointer> ShuffleText_Shuffler(FileStream stream, Random random, float shufflechance, StreamWriter logstream, List<ResourcePointer> pointerlist)
         {
@@ -174,38 +160,29 @@ namespace HATE
                     byte TMP = (byte)stream.ReadByte();
 
                     if (TMP == 0)
-                    {
                         break;
-                    }
-
                     else
-                    {
                         ByteString.Add(TMP);
-                    }
 
                 }
 
                 string convertedString = new string(ByteString.Select(x => (char)x).ToArray());
 
-                if (StrlenByte >= 3 && !(bannedStrings.Any(convertedString.Contains)))
-                {
+                if (StrlenByte >= 3 && !bannedStrings.Any(convertedString.Contains))
                     strPointerList.Add(new StringPointer(pointerlist[i], convertedString));
-                }
             }
 
-            logstream.WriteLine("Added " + strPointerList.Count + " good string pointers to SprPointerList.");
+            logstream.WriteLine($"Added {strPointerList.Count} good string pointers to SprPointerList.");
 
             Dictionary<string, List<ResourcePointer>> stringDict = new Dictionary<string, List<ResourcePointer>>();
             int totalStrings = 0;
 
             foreach (StringPointer s in strPointerList)
             {
-                if (s.Ending != "")
+                if (!string.IsNullOrWhiteSpace(s.Ending))
                 {
                     if (!stringDict.ContainsKey(s.Ending))
-                    {
                         stringDict[s.Ending] = new List<ResourcePointer>();
-                    }
 
                     stringDict[s.Ending].Add(s.Base);
                     totalStrings++;
@@ -214,7 +191,7 @@ namespace HATE
 
             foreach (string ending in stringDict.Keys)
             {
-                logstream.WriteLine("Added " + stringDict[ending].Count + " string pointers of ending " + ending + " to dialogue string List.");
+                logstream.WriteLine($"Added {stringDict[ending].Count} string pointers of ending {ending} to dialogue string List.");
 
                 stringDict[ending].Shuffle(Shuffle.PointerSwapLoc, random);
 
