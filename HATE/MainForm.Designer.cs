@@ -44,7 +44,6 @@
             this.btnLaunch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.lblGameName = new System.Windows.Forms.Label();
-            this.chbGarbleText = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnCorrupt
@@ -53,7 +52,7 @@
             this.btnCorrupt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCorrupt.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCorrupt.ForeColor = System.Drawing.Color.Coral;
-            this.btnCorrupt.Location = new System.Drawing.Point(20, 422);
+            this.btnCorrupt.Location = new System.Drawing.Point(19, 385);
             this.btnCorrupt.Name = "btnCorrupt";
             this.btnCorrupt.Size = new System.Drawing.Size(147, 25);
             this.btnCorrupt.TabIndex = 0;
@@ -179,7 +178,7 @@
             this.chbShowSeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.chbShowSeed.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chbShowSeed.ForeColor = System.Drawing.Color.White;
-            this.chbShowSeed.Location = new System.Drawing.Point(12, 323);
+            this.chbShowSeed.Location = new System.Drawing.Point(11, 286);
             this.chbShowSeed.Name = "chbShowSeed";
             this.chbShowSeed.Size = new System.Drawing.Size(129, 31);
             this.chbShowSeed.TabIndex = 7;
@@ -192,7 +191,7 @@
             this.txtSeed.BackColor = System.Drawing.Color.White;
             this.txtSeed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSeed.ForeColor = System.Drawing.Color.Black;
-            this.txtSeed.Location = new System.Drawing.Point(67, 368);
+            this.txtSeed.Location = new System.Drawing.Point(66, 331);
             this.txtSeed.Name = "txtSeed";
             this.txtSeed.Size = new System.Drawing.Size(100, 20);
             this.txtSeed.TabIndex = 8;
@@ -202,7 +201,7 @@
             this.txtPower.BackColor = System.Drawing.Color.White;
             this.txtPower.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPower.ForeColor = System.Drawing.Color.Black;
-            this.txtPower.Location = new System.Drawing.Point(67, 394);
+            this.txtPower.Location = new System.Drawing.Point(66, 357);
             this.txtPower.Name = "txtPower";
             this.txtPower.Size = new System.Drawing.Size(100, 20);
             this.txtPower.TabIndex = 9;
@@ -215,7 +214,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(8, 368);
+            this.label1.Location = new System.Drawing.Point(7, 331);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 17);
             this.label1.TabIndex = 10;
@@ -226,7 +225,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(8, 394);
+            this.label2.Location = new System.Drawing.Point(7, 357);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(57, 17);
             this.label2.TabIndex = 11;
@@ -238,7 +237,7 @@
             this.btnLaunch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLaunch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLaunch.ForeColor = System.Drawing.Color.Fuchsia;
-            this.btnLaunch.Location = new System.Drawing.Point(20, 453);
+            this.btnLaunch.Location = new System.Drawing.Point(19, 416);
             this.btnLaunch.Name = "btnLaunch";
             this.btnLaunch.Size = new System.Drawing.Size(147, 25);
             this.btnLaunch.TabIndex = 12;
@@ -272,31 +271,13 @@
             this.lblGameName.Text = "Undertale";
             this.lblGameName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // chbGarbleText
-            // 
-            this.chbGarbleText.AutoSize = true;
-            this.chbGarbleText.BackColor = System.Drawing.Color.Black;
-            this.chbGarbleText.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.chbGarbleText.FlatAppearance.BorderSize = 0;
-            this.chbGarbleText.FlatAppearance.CheckedBackColor = System.Drawing.Color.Transparent;
-            this.chbGarbleText.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.chbGarbleText.Font = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chbGarbleText.ForeColor = System.Drawing.Color.White;
-            this.chbGarbleText.Location = new System.Drawing.Point(12, 286);
-            this.chbGarbleText.Name = "chbGarbleText";
-            this.chbGarbleText.Size = new System.Drawing.Size(140, 31);
-            this.chbGarbleText.TabIndex = 16;
-            this.chbGarbleText.Text = "Garble Text";
-            this.chbGarbleText.UseVisualStyleBackColor = false;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(184, 487);
-            this.Controls.Add(this.chbGarbleText);
+            this.ClientSize = new System.Drawing.Size(184, 449);
             this.Controls.Add(this.lblGameName);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnLaunch);
@@ -342,7 +323,6 @@
         private System.Windows.Forms.Button btnLaunch;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblGameName;
-        private System.Windows.Forms.CheckBox chbGarbleText;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Windows.Forms;
 
 namespace HATE
 {
@@ -42,17 +43,19 @@ namespace HATE
         public ResourcePointer(byte[] ptr, int loc) { Address = BitConverter.ToInt32(ptr, 0); Location = loc; }
     }
 
+
+
     partial class MainForm
     {
         public bool ShuffleAudio_Func(Random random, float chance, StreamWriter logstream)
         {
-            return Shuffle.LoadDataAndFind("AUDO", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle) &&
-                   Shuffle.LoadDataAndFind("SOND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);
+            return Shuffle.LoadDataAndFind("SOND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle) && 
+                   Shuffle.LoadDataAndFind("AUDO", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);               
         }
 
         public bool ShuffleBG_Func(Random random, float chance, StreamWriter logstream)
         {
-            return Shuffle.LoadDataAndFind("BGND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);
+            return Shuffle.LoadDataAndFind("BGND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);              
         }
 
         public bool ShuffleFont_Func(Random random, float chance, StreamWriter logstream)
@@ -72,7 +75,16 @@ namespace HATE
 
         public bool ShuffleText_Func(Random random_, float chance, StreamWriter logstream_)
         {
-            return Shuffle.LoadDataAndFind("STRG", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, ShuffleText_Shuffler, Shuffle.SimpleWriter));
+            if (lblGameName.Text == "Deltarune")
+            {
+                return Shuffle.JSONStringShuffle("./lang/lang_en.json", "./lang/lang_en.json", random_, chance, logstream_) &&
+                       Shuffle.JSONStringShuffle("./lang/lang_ja.json", "./lang/lang_ja.json", random_, chance, logstream_);
+            }
+            else
+            {
+                MessageBox.Show(lblGameName.Text);
+                return Shuffle.LoadDataAndFind("STRG", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, ShuffleText_Shuffler, Shuffle.SimpleWriter));
+            }
         }
 
         // TODO: clean this
@@ -200,5 +212,33 @@ namespace HATE
 
             return shuffledPointerList;
         }
+
+        public void DebugListChunks(string resource_file, StreamWriter logstream)
+        {
+            byte[] readBuffer = new byte[4];
+
+            using (FileStream stream = new FileStream(resource_file, FileMode.OpenOrCreate))
+            {
+                logstream.WriteLine($"Opened {resource_file}.");
+                stream.Position = 8;
+
+                int dataSegmentCounter = 0;
+
+                while (stream.Position != stream.Length)
+                {
+                    stream.Read(readBuffer, 0, 4);
+                    string headerName = new string(readBuffer.Select(x => (char)x).ToArray());
+                    stream.Read(readBuffer, 0, 4);
+                    int chunk_size = BitConverter.ToInt32(readBuffer, 0);
+                    logstream.WriteLine($"Chunk #{dataSegmentCounter}: {headerName} found, size {chunk_size}.");
+                    stream.Position += chunk_size;
+                    dataSegmentCounter++;
+                }
+
+                logstream.WriteLine($"Closed {resource_file}.");
+            }
+        }
+
+        
     }
 }

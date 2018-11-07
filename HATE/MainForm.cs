@@ -56,18 +56,17 @@ namespace HATE
             }
 
             if (File.Exists("DELTARUNE.exe") || File.Exists("../../SURVEY_PROGRAM.app")) { lblGameName.Text = "Deltarune"; }
-            else if (File.Exists("UNDERTALE.exe") || File.Exists("../../UNDERTALE.app")) { } //Do nothing
+            else if (File.Exists("UNDERTALE.exe") || File.Exists("../../UNDERTALE.app")) { lblGameName.Text = "Undertale"; } 
             else
             {
                 lblGameName.Text = GetGame().Replace(".exe", "");
                 if (!string.IsNullOrWhiteSpace(lblGameName.Text))
                 {
-                    MessageBox.Show($"We couldn't find Deltarune or Undertale in this folder, if you're using this for another game then as long there is a {_dataWin} file and the game was made with GameMaker then this program should work but their is no guarantees that it will", "HATE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"We couldn't find Deltarune or Undertale in this folder, if you're using this for another game then as long there is a {_dataWin} file and the game was made with GameMaker then this program should work but there are no guarantees that it will.", "HATE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 else
                 {
                     MessageBox.Show("We couldn't find any game in this folder, check that this is in the right folder.");
-                    Close();
                 }
             }
             
@@ -157,6 +156,8 @@ namespace HATE
             catch (Exception) { MessageBox.Show("Could not set up the log file."); }
 
             if (!Setup()) { goto End; };
+            //DebugListChunks(_dataWin, _logWriter);
+            //Shuffle.LoadDataAndFind("STRG", _random, 0, _logWriter, _dataWin, Shuffle.ComplexShuffle(Shuffle.StringDumpAccumulator, Shuffle.SimpleShuffler, Shuffle.SimpleWriter));
             if (_hitboxFix && !HitboxFix_Func(_random, _truePower, _logWriter)) { goto End; }
             if (_shuffleGFX && !ShuffleGFX_Func(_random, _truePower, _logWriter)) { goto End; }
             if (_shuffleText && !ShuffleText_Func(_random, _truePower, _logWriter)) { goto End; }
@@ -196,7 +197,7 @@ namespace HATE
             _random = new Random();
             int timeSeed = (int)DateTime.Now.Subtract(_unixTimeZero).TotalSeconds;
 
-            if (!byte.TryParse(txtPower.Text, out power))
+            if (!byte.TryParse(txtPower.Text, out power) && _corrupt)
             {
                 MessageBox.Show("Please set Power to a number between 0 and 255 and try again.");
                 return false;
@@ -231,12 +232,28 @@ namespace HATE
             {
                 if (!Safe.CreateDirectory("Data")) { return false; }
                 if (!Safe.CopyFile(_dataWin, $"Data/{_dataWin}")) { return false; }
+                if (lblGameName.Text == "Deltarune")
+                {
+                    if (!Safe.CopyFile("./lang/lang_en.json", "./Data/lang_en.json")) { return false; };
+                    if (!Safe.CopyFile("./lang/lang_ja.json", "./Data/lang_ja.json")) { return false; };
+                }
+                _logWriter.WriteLine($"Finished setting up the Data folder.");
             }
 
             if (!Safe.DeleteFile(_dataWin)) { return false; }
             _logWriter.WriteLine($"Deleted {_dataWin}.");
+            if (!Safe.DeleteFile("./lang/lang_en.json")) { return false; }
+            _logWriter.WriteLine($"Deleted ./lang/lang_en.json.");
+            if (!Safe.DeleteFile("./lang/lang_ja.json")) { return false; }
+            _logWriter.WriteLine($"Deleted ./lang/lang_ja.json.");
+
             if (!Safe.CopyFile($"Data/{_dataWin}", _dataWin)) { return false; }
             _logWriter.WriteLine($"Copied {_dataWin}.");
+            if (!Safe.CopyFile("./Data/lang_en.json","./lang/lang_en.json")) { return false; }
+            _logWriter.WriteLine($"Copied ./lang/lang_en.json.");
+            if (!Safe.CopyFile("./Data/lang_ja.json", "./lang/lang_ja.json")) { return false; }
+            _logWriter.WriteLine($"Copied ./lang/lang_ja.json.");
+
             return true;
         }
         
@@ -304,5 +321,6 @@ namespace HATE
         {
             txtPower.Text = string.IsNullOrWhiteSpace(txtPower.Text) ? _defaultPowerText : txtPower.Text;
         }
+
     }
 }
