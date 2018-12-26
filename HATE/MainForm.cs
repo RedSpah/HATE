@@ -71,7 +71,7 @@ namespace HATE
             }
             
             //This is so it doesn't keep starting the program over and over in case something messes up
-            if (Process.GetProcessesByName("HATE").Length == 1)
+            if ((Environment.OSVersion).Platform == PlatformID.Win32NT && Process.GetProcessesByName("HATE").Length == 1)
             {
                 if (Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) || Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)) && !IsElevated)
                 {
@@ -108,9 +108,9 @@ namespace HATE
 
         public string GetGame()
         {
-            if (File.Exists("DELTARUNE.exe")) { return $"{LinuxWine()} DELTARUNE.exe"; }
+            if (File.Exists("DELTARUNE.exe")) { return $"DELTARUNE.exe"; }
             else if (File.Exists("../../SURVEY_PROGRAM.app")) { return "../../SURVEY_PROGRAM.app"; }
-            else if (File.Exists("UNDERTALE.exe")) { return $"{LinuxWine()} UNDERTALE.exe"; }
+            else if (File.Exists("UNDERTALE.exe")) { return $"UNDERTALE.exe"; }
             else if (File.Exists("../../UNDERTALE.app")) { return "../../UNDERTALE.app"; }
             else
             {
@@ -138,13 +138,21 @@ namespace HATE
         {
             EnableControls(false);
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo(GetGame())
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(LinuxWine(), arguments: GetGame())
             {
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             };
 
-            Process.Start(processStartInfo);
+            try
+            {
+                Process.Start(processStartInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
             EnableControls(true);
         }
 
