@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HATE", "HATE\HATE.csproj", "{2F443ECA-6BD2-4447-BF1E-E6FDFAC308C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HATE.GUI", "HATE\HATE.csproj", "{2F443ECA-6BD2-4447-BF1E-E6FDFAC308C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HATE.CMD", "HATE.CMD\HATE.CMD.csproj", "{4E5237E3-5593-4C4C-9D02-7A64F4739869}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HATE.Core", "HATE.Core\HATE.Core.csproj", "{4A827F83-533C-4DEF-A463-D29CB4E898BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{2F443ECA-6BD2-4447-BF1E-E6FDFAC308C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F443ECA-6BD2-4447-BF1E-E6FDFAC308C1}.Release|x86.ActiveCfg = Release|x86
 		{2F443ECA-6BD2-4447-BF1E-E6FDFAC308C1}.Release|x86.Build.0 = Release|x86
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Debug|x86.Build.0 = Debug|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Release|x86.ActiveCfg = Release|Any CPU
+		{4E5237E3-5593-4C4C-9D02-7A64F4739869}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

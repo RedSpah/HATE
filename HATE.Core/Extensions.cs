@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HATE
+namespace HATE.Core
 {
     public static class Extensions
     {

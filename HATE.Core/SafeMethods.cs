@@ -6,7 +6,7 @@ using System.IO;
 using System.Security;
 using Optional;
 
-namespace HATE
+namespace HATE.Core
 {
     static class Safe
     {

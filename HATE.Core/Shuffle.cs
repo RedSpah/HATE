@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace HATE
+namespace HATE.Core
 {
     static class Shuffle
     {

@@ -4,8 +4,10 @@ using System.Linq;
 using System.IO;
 using System.Windows.Forms;
 
-namespace HATE
+namespace HATE.Core
 {
+    //TODO: Make a cmd version to see if that makes it work on macOS 14.10
+    //TODO: Make sure you don't shuffle the string obj_writer_slash_Draw_0_gml_147_0 ("||")
     public class StringPointer
     {
         public ResourcePointer Base;
