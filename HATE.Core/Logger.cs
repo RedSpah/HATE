@@ -9,9 +9,9 @@ namespace HATE.Core.Logging
         
         public static event MessageHandler MessageHandle;
 
-        public static void Log(MessageType messageType, string message)
+        public static void Log(MessageType messageType, string message, bool wait = false)
         {
-            MessageHandle?.Invoke(new MessageEventArgs(messageType, message));
+            MessageHandle?.Invoke(new MessageEventArgs(messageType, message, wait));
         }
     }
 
@@ -24,12 +24,14 @@ namespace HATE.Core.Logging
 
     public class MessageEventArgs : EventArgs
     {
-        public MessageEventArgs(MessageType messageType, string message)
+        public MessageEventArgs(MessageType messageType, string message, bool waitForAnything)
         {
             MessageType = messageType;
             Message = message;
+            WaitForAnything = waitForAnything;
         }
         public readonly MessageType MessageType;
         public readonly string Message;
+        public readonly bool WaitForAnything;
     }
 }

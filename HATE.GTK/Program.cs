@@ -8,6 +8,7 @@ namespace HATE.GTK
     public class Program
     {
         static App _app = null;
+        static FormsWindow formsWindow = null;
 
         [STAThread]
         public static void Main(string[] args)
@@ -21,38 +22,60 @@ namespace HATE.GTK
             Gtk.Application.Run();
         }
 
-        public static async Task LoadWindow(App app)
+        public static async Task<FormsWindow> LoadWindow(App app, int Width = 220, int Height = 485)
         {
             var window = new FormsWindow();
             window.LoadApplication(app);
             window.SetApplicationTitle("HATE");
             window.SetApplicationIcon("hateicon.png");
-            window.WidthRequest = 220;
+
+            if(App.OperatingSystem == App.OS.Linux)
+                window.WidthRequest = Width;
+            else if (App.OperatingSystem == App.OS.Windows)
+                window.WidthRequest = Width - 15;
             window.DefaultWidth = window.WidthRequest;
-            window.HeightRequest = 485;
+
+            if(App.OperatingSystem == App.OS.Linux)
+                window.HeightRequest = Height;
+            else if (App.OperatingSystem == App.OS.Windows)
+                window.HeightRequest = Height + 15;
             window.DefaultHeight = window.HeightRequest;
+
             window.AllowGrow = false;
             window.AllowShrink = false;
             window.Show();
+            return window;
         }
 
         public static async Task MessageBoxTask()
         {
             while (true)
             {
-                while (!App.NeedMessageBox)
+                try
                 {
-                    await Task.Delay(250);
+                    while (!App.NeedMessageBox)
+                    {
+                        await Task.Delay(250);
+                    }
+                    if (formsWindow == null)
+                    {
+                        App app = new App(true);
+                        formsWindow = await LoadWindow(app, 585, 150);
+                        formsWindow.DestroyWithParent = true;
+                    }
+                    formsWindow.Show();
+                    if (!string.IsNullOrWhiteSpace(MessageBox._Title))
+                        formsWindow.SetApplicationTitle(MessageBox._Title);
+                    while (App.NeedMessageBox)
+                    {
+                        await Task.Delay(250);
+                    }
+                    formsWindow.Destroy();
                 }
-                App app = new App(true);
-                LoadWindow(app);
-                while (App.NeedMessageBox)
+                catch
                 {
-                    await Task.Delay(250);
+                    formsWindow.Destroy();
                 }
-                FormsWindow formsWindow = new FormsWindow();
-                formsWindow.Destroy();
-                formsWindow.HideOnDelete();
             }
         }
     }

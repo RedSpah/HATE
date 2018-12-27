@@ -4,6 +4,7 @@ using HATE.Core;
 using HATE.Core.Logging;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace HATE
 {
@@ -25,41 +26,6 @@ namespace HATE
 
         private StreamWriter _logWriter;
 
-        //Code from https://stackoverflow.com/questions/38790802/determine-operating-system-in-net-core
-        //Was needed because what we get isn't the best when using .NET Standard (only shows if we are on windows or Unix (which could be macOS or Linix))
-        private OS OperatingSystem
-        {
-            get {
-                string windir = Environment.GetEnvironmentVariable("windir");
-                if (!string.IsNullOrEmpty(windir) && windir.Contains(@"\") && Directory.Exists(windir))
-                {
-                    return OS.Windows;
-                }
-                else if (File.Exists(@"/proc/sys/kernel/ostype"))
-                {
-                    string osType = File.ReadAllText(@"/proc/sys/kernel/ostype");
-                    if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Note: Android gets here too
-                        return OS.Linux;
-                    }
-                    else
-                    {
-                        return OS.Unknown;
-                    }
-                }
-                else if (File.Exists(@"/System/Library/CoreServices/SystemVersion.plist"))
-                {
-                    // Note: iOS gets here too
-                    return OS.macOS;
-                }
-                else
-                {
-                    return OS.Unknown;
-                }
-            }
-        }
-
         private bool _shuffleGFX = false;
         private bool _shuffleText = false;
         private bool _hitboxFix = false;
@@ -80,7 +46,6 @@ namespace HATE
             InitializeComponent();
             Logger.MessageHandle += Logger_SecondChange;
 
-            MessageBox.Show("Title", "Wew messages", MessageBox.MessageIcon.Warning, MessageBox.MessageButton.Yes);
             if (!File.Exists(Main._dataWin))
             {
                 if (File.Exists("game.ios"))
@@ -96,7 +61,7 @@ namespace HATE
                 labGameName.Text = GetGame().Replace(".exe", "");
                 if (!string.IsNullOrWhiteSpace(labGameName.Text))
                 {
-                    Logger.Log(MessageType.Warning, $"We couldn't find Deltarune or Undertale in this folder, if you're using this for another game then as long there is a {Main._dataWin} file and the game was made with GameMaker then this program should work but there are no guarantees that it will.");
+                    Logger.Log(MessageType.Warning, $"We couldn't find Deltarune or Undertale in this folder, if you're using this for another game then as long there is a {Main._dataWin} file and the game was made with GameMaker then this program should work but there are no guarantees that it will.", true);
                 }
                 else
                 {
@@ -104,43 +69,62 @@ namespace HATE
                 }
             }
 
-            //This is so it doesn't keep starting the program over and over in case something messes up
-            if ((Environment.OSVersion).Platform == PlatformID.Win32NT && Process.GetProcessesByName("HATE").Length == 1)
-            {
-                if (Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) || Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)) && !IsElevated)
-                {
-                    DisplayActionSheet("Title","cancel","What?","Ok").ConfigureAwait(true).GetAwaiter().GetResult();
-                    //DialogResult dialogResult = MessageBox.Show($"The game is in a system protected folder and we need elevated permissions in order to mess with {_dataWin}, Do you allow us to get elevated permissions (if you press no this will just close the program as we can't do anything)", "HATE", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                    //if (dialogResult == DialogResult.Yes)
-                    //{
-                    //    // Restart program and run as admin
-                    //    var exeName = Process.GetCurrentProcess().MainModule.FileName;
-                    //    ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
-                    //    startInfo.Arguments = "true";
-                    //    startInfo.Verb = "runas";
-                    //    Process.Start(startInfo);
-                    //    Application.Current.Quit();
-                    //}
-                    //else
-                    //{
-                    //    Application.Current.Quit();
-                    //}
-                }
-            }
-
             _random = new Random();
 
             UpdateCorrupt();
+
+            //This is so it doesn't keep starting the program over and over in case something messes up
+            if (App.OperatingSystem == App.OS.Windows && Process.GetProcessesByName("HATE.GTK").Length == 1)
+            {
+                var task = Task.Run(() => BecomeElevated()).ConfigureAwait(false);
+            }
         }
 
-        public MessageBox.MessageResult MessageResult()
+        public async Task BecomeElevated()
         {
-            return MessageBox.MessageResult.Ok;
+            if (Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) || Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)) && !IsElevated)
+            {
+                var dialogResult = MessageBox.Show($"The game is in a system protected folder and we need elevated permissions in order to mess with {Main._dataWin}, Do you allow us to get elevated permissions (if you press no this will just close the program as we can't do anything)", MessageBox.MessageButton.YesNo, MessageBox.MessageIcon.Exclamation).ConfigureAwait(true).GetAwaiter().GetResult();
+                if (dialogResult == MessageBox.MessageResult.Yes)
+                {
+                    //Restart program and run as admin
+                    var exeName = Process.GetCurrentProcess().MainModule.FileName;
+                    ProcessStartInfo startInfo = new ProcessStartInfo(exeName);
+                    startInfo.Arguments = "true";
+                    startInfo.Verb = "runas";
+                    Process.Start(startInfo);
+                    Application.Current.Quit();
+                }
+                else
+                {
+                    Application.Current.Quit();
+                }
+            }
         }
 
-        private void Logger_SecondChange(MessageEventArgs messageType)
+        private async void Logger_SecondChange(MessageEventArgs messageType)
         {
-            //Code TBA
+            if (messageType.MessageType == MessageType.Debug)
+            {
+                if(!messageType.WaitForAnything)
+                    MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Information);
+                else
+                    await MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Information);
+            }
+            else if (messageType.MessageType == MessageType.Warning)
+            {
+                if (!messageType.WaitForAnything)
+                    MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Exclamation);
+                else
+                    await MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Exclamation);
+            }
+            else if (messageType.MessageType == MessageType.Error)
+            {
+                if (!messageType.WaitForAnything)
+                    MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Error);
+                else
+                    await MessageBox.Show(messageType.Message, MessageBox.MessageButton.OK, MessageBox.MessageIcon.Error);
+            }
         }
 
         public bool IsElevated
@@ -148,27 +132,25 @@ namespace HATE
             get
             {
                 //                This is to make sure we are running on Windows
-                return OperatingSystem == OS.Windows && new System.Security.Principal.WindowsPrincipal(System.Security.Principal.WindowsIdentity.GetCurrent()).IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+                return App.OperatingSystem == App.OS.Windows && new System.Security.Principal.WindowsPrincipal(System.Security.Principal.WindowsIdentity.GetCurrent()).IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
             }
         }
 
         public string GetGame()
         {
             if (File.Exists("DELTARUNE.exe")) { return $"DELTARUNE.exe"; }
-            else if (File.Exists("../../SURVEY_PROGRAM.app")) { return "../../SURVEY_PROGRAM.app"; }
+            else if (Directory.Exists("SURVEY_PROGRAM.app")) { return "SURVEY_PROGRAM.app"; }
             else if (File.Exists("UNDERTALE.exe")) { return $"UNDERTALE.exe"; }
-            else if (File.Exists("../../UNDERTALE.app")) { return "../../UNDERTALE.app"; }
+            else if (Directory.Exists("UNDERTALE.app")) { return "UNDERTALE.app"; }
             else
             {
                 var files = Directory.EnumerateFiles(Directory.GetCurrentDirectory());
                 foreach (string s in files)
                 {
-                    if (OperatingSystem == OS.Windows && !s.Remove(0, s.LastIndexOf("\\") + 1).Contains("HATE.exe") && s.Contains(".exe") || s.Contains(".app"))
+                    if (App.OperatingSystem == App.OS.Windows && !s.Remove(0, s.LastIndexOf("\\") + 1).Contains("HATE.exe") && s.Contains(".exe") || s.Contains(".app"))
                         return s.Remove(0, s.LastIndexOf("\\") + 1);
                     else if (s != "HATE.exe" && s.Contains(".exe") || s.Contains(".app"))
-                    {
                         return s.Remove(0, s.LastIndexOf("/") + 1);
-                    }
                 }    
             }
             return "";
@@ -176,7 +158,7 @@ namespace HATE
 
         public string LinuxWine()
         {
-            if (OperatingSystem == OS.Linux)
+            if (App.OperatingSystem == App.OS.Linux)
                 return "wine";
             else
                 return "";
@@ -187,7 +169,7 @@ namespace HATE
             EnableControls(false);
 
             ProcessStartInfo processStartInfo = null;
-            if (OperatingSystem == OS.Linux)
+            if (App.OperatingSystem == App.OS.Linux)
             {
                 processStartInfo = new ProcessStartInfo(LinuxWine(), arguments: GetGame())
                 {
@@ -265,7 +247,7 @@ namespace HATE
 
             if (!byte.TryParse(txtPower.Text, out power) && _corrupt)
             {
-                Logger.Log(MessageType.Warning ,"Please set Power to a number between 0 and 255 and try again.");
+                Logger.Log(MessageType.Warning ,"Please set Power to a number between 0 and 255 and try again.", true);
                 return false;
             }
             _truePower = (float)power / 255;
@@ -384,14 +366,6 @@ namespace HATE
         {
             _showSeed = chbShowSeed.IsToggled;
             labShowSeed.TextColor = Style.GetOptionColor(_showSeed);
-        }
-
-        private enum OS
-        {
-            Windows,
-            Linux,
-            macOS,
-            Unknown
         }
     }
 }

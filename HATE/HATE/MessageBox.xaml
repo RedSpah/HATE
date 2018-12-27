@@ -1,23 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="HATE.MessageBox">
+             x:Class="HATE.MessageBox"
+             BackgroundColor="Black">
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Black"/>
+        </Style>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="0,5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <Image VerticalOptions="Center"/>
-            <Label Grid.Column="1" Text="Wew this is some text that will be some messageBox content because I need to test some magical things™"/>
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                   <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!--<Image x:Name="imgIcon" VerticalOptions="Center" Source="Assets/alert-circle-outline.png"/>-->
+                <Label x:Name="labMessage" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" TextColor="White"/>
+            </Grid>
 
-            <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
-                <Button Clicked="SomeMagicalThing" Text="Wew Click me"/>
+            <StackLayout Grid.Row="1" Orientation="Horizontal" HorizontalOptions="Center" x:Name="Buttons">
+                <Button Clicked="SomeMagicalThing" Text="Abort" x:Name="butAbort" IsVisible="False" BorderColor="Red" TextColor="Red"/>
+                <Button Clicked="SomeMagicalThing" Text="Cancel" x:Name="butCancel" IsVisible="False" BorderColor="Red" TextColor="Red"/>
+                <Button Clicked="SomeMagicalThing" Text="Ignore" x:Name="butIgnore" IsVisible="False" BorderColor="Gray" TextColor="Gray"/>
+                <Button Clicked="SomeMagicalThing" Text="No" x:Name="butNo" IsVisible="False" BorderColor="Red" TextColor="Red"/>
+                <Button Clicked="SomeMagicalThing" Text="OK" x:Name="butOK" IsVisible="False" BorderColor="Green" TextColor="Green"/>
+                <Button Clicked="SomeMagicalThing" Text="Retry" x:Name="butRetry" IsVisible="False" BorderColor="Orange" TextColor="Orange"/>
+                <Button Clicked="SomeMagicalThing" Text="Yes" x:Name="butYes" IsVisible="False" BorderColor="Green" TextColor="Green"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

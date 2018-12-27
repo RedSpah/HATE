@@ -15,6 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\alert-circle-outline.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\alert-circle-outline.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Tmp.cs" />
   </ItemGroup>
 
