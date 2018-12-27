@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Windows.Forms;
 
 namespace HATE.Core
 {
-    //TODO: Make a cmd version to see if that makes it work on macOS 14.10
     //TODO: Make sure you don't shuffle the string obj_writer_slash_Draw_0_gml_147_0 ("||")
     public class StringPointer
     {
@@ -47,50 +45,54 @@ namespace HATE.Core
 
 
 
-    partial class MainForm
+    public class Main
     {
-        public bool ShuffleAudio_Func(Random random, float chance, StreamWriter logstream)
+        public static string _dataWin;
+        public static string GameName;
+        private static readonly string[] _friskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
+        public static bool _friskMode;
+
+        public static bool ShuffleAudio_Func(Random random, float chance, StreamWriter logstream)
         {
-            return Shuffle.LoadDataAndFind("SOND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle) && 
-                   Shuffle.LoadDataAndFind("AUDO", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);               
+            return Shuffle.LoadDataAndFind("SOND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle) &&
+                   Shuffle.LoadDataAndFind("AUDO", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);
         }
 
-        public bool ShuffleBG_Func(Random random, float chance, StreamWriter logstream)
+        public static bool ShuffleBG_Func(Random random, float chance, StreamWriter logstream)
         {
-            return Shuffle.LoadDataAndFind("BGND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);              
+            return Shuffle.LoadDataAndFind("BGND", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);
         }
 
-        public bool ShuffleFont_Func(Random random, float chance, StreamWriter logstream)
+        public static bool ShuffleFont_Func(Random random, float chance, StreamWriter logstream)
         {
             return Shuffle.LoadDataAndFind("FONT", random, chance, logstream, _dataWin, Shuffle.SimpleShuffle);
         }
 
-        public bool HitboxFix_Func(Random random_, float chance, StreamWriter logstream_)
+        public static bool HitboxFix_Func(Random random_, float chance, StreamWriter logstream_)
         {
             return Shuffle.LoadDataAndFind("SPRT", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, HitboxFix_Shuffler, Shuffle.SimpleWriter));
         }
 
-        public bool ShuffleGFX_Func(Random random_, float chance, StreamWriter logstream_)
+        public static bool ShuffleGFX_Func(Random random_, float chance, StreamWriter logstream_)
         {
             return Shuffle.LoadDataAndFind("SPRT", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(ShuffleGFX_Accumulator, Shuffle.SimpleShuffler, Shuffle.SimpleWriter));
         }
 
-        public bool ShuffleText_Func(Random random_, float chance, StreamWriter logstream_)
+        public static bool ShuffleText_Func(Random random_, float chance, StreamWriter logstream_)
         {
-            if (lblGameName.Text == "Deltarune")
+            if (GameName == "Deltarune")
             {
                 return Shuffle.JSONStringShuffle("./lang/lang_en.json", "./lang/lang_en.json", random_, chance, logstream_) &&
                        Shuffle.JSONStringShuffle("./lang/lang_ja.json", "./lang/lang_ja.json", random_, chance, logstream_);
             }
             else
             {
-                MessageBox.Show(lblGameName.Text);
                 return Shuffle.LoadDataAndFind("STRG", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, ShuffleText_Shuffler, Shuffle.SimpleWriter));
             }
         }
 
         // TODO: clean this
-        public List<ResourcePointer> ShuffleGFX_Accumulator(FileStream stream, Random random, float shufflechance, StreamWriter logstream)
+        public static List<ResourcePointer> ShuffleGFX_Accumulator(FileStream stream, Random random, float shufflechance, StreamWriter logstream)
         {
             byte[] readBuffer = new byte[Shuffle.WordSize];
             int pointerNum = 0;
@@ -142,7 +144,7 @@ namespace HATE.Core
         }
 
         // TODO: implement this
-        public List<ResourcePointer> HitboxFix_Shuffler(FileStream stream, Random random, float shufflechance, StreamWriter logstream, List<ResourcePointer> pointerlist)
+        public static List<ResourcePointer> HitboxFix_Shuffler(FileStream stream, Random random, float shufflechance, StreamWriter logstream, List<ResourcePointer> pointerlist)
         {
             foreach (ResourcePointer spriteptr in pointerlist)
             {
@@ -155,7 +157,7 @@ namespace HATE.Core
 
         // TODO: delete this
         // TODO: clean this
-        public List<ResourcePointer> ShuffleText_Shuffler(FileStream stream, Random random, float shufflechance, StreamWriter logstream, List<ResourcePointer> pointerlist)
+        public static List<ResourcePointer> ShuffleText_Shuffler(FileStream stream, Random random, float shufflechance, StreamWriter logstream, List<ResourcePointer> pointerlist)
         {
             string[] bannedStrings = { "_" };
             List<ResourcePointer> shuffledPointerList = new List<ResourcePointer>();
@@ -215,7 +217,7 @@ namespace HATE.Core
             return shuffledPointerList;
         }
 
-        public void DebugListChunks(string resource_file, StreamWriter logstream)
+        public static void DebugListChunks(string resource_file, StreamWriter logstream)
         {
             byte[] readBuffer = new byte[4];
 
@@ -240,7 +242,5 @@ namespace HATE.Core
                 logstream.WriteLine($"Closed {resource_file}.");
             }
         }
-
-        
     }
 }

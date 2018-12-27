@@ -17,14 +17,14 @@ namespace HATE
             private static readonly string _btnCorruptLabel = " -CORRUPT- ";
             private static readonly Color _optionSet = Color.Yellow;
             private static readonly Color _optionUnset = Color.White;
-            
+
             public static Color GetOptionColor(bool b) { return b ? _optionSet : _optionUnset; }
             public static Color GetCorruptColor(bool b) { return b ? _btnCorruptColor : _btnRestoreColor; }
             public static string GetCorruptLabel(bool b) { return b ? _btnCorruptLabel : _btnRestoreLabel; }
         }
 
         private StreamWriter _logWriter;
-        
+
         private bool _shuffleGFX = false;
         private bool _shuffleText = false;
         private bool _hitboxFix = false;
@@ -56,7 +56,7 @@ namespace HATE
             }
 
             if (File.Exists("DELTARUNE.exe") || File.Exists("../../SURVEY_PROGRAM.app")) { lblGameName.Text = "Deltarune"; }
-            else if (File.Exists("UNDERTALE.exe") || File.Exists("../../UNDERTALE.app")) { lblGameName.Text = "Undertale"; } 
+            else if (File.Exists("UNDERTALE.exe") || File.Exists("../../UNDERTALE.app")) { lblGameName.Text = "Undertale"; }
             else
             {
                 lblGameName.Text = GetGame().Replace(".exe", "");
@@ -69,7 +69,7 @@ namespace HATE
                     MessageBox.Show("We couldn't find any game in this folder, check that this is in the right folder.");
                 }
             }
-            
+
             //This is so it doesn't keep starting the program over and over in case something messes up
             if ((Environment.OSVersion).Platform == PlatformID.Win32NT && Process.GetProcessesByName("HATE").Length == 1)
             {
@@ -94,7 +94,7 @@ namespace HATE
             }
 
             _random = new Random();
-            
+
             UpdateCorrupt();
         }
 
@@ -173,7 +173,7 @@ namespace HATE
             if (_shuffleBG && !ShuffleBG_Func(_random, _truePower, _logWriter)) { goto End; }
             if (_shuffleAudio && !ShuffleAudio_Func(_random, _truePower, _logWriter)) { goto End; }
 
-            End:
+        End:
             _logWriter.Close();
             EnableControls(true);
         }
@@ -257,14 +257,14 @@ namespace HATE
 
             if (!Safe.CopyFile($"Data/{_dataWin}", _dataWin)) { return false; }
             _logWriter.WriteLine($"Copied {_dataWin}.");
-            if (!Safe.CopyFile("./Data/lang_en.json","./lang/lang_en.json")) { return false; }
+            if (!Safe.CopyFile("./Data/lang_en.json", "./lang/lang_en.json")) { return false; }
             _logWriter.WriteLine($"Copied ./lang/lang_en.json.");
             if (!Safe.CopyFile("./Data/lang_ja.json", "./lang/lang_ja.json")) { return false; }
             _logWriter.WriteLine($"Copied ./lang/lang_ja.json.");
 
             return true;
         }
-        
+
         public void UpdateCorrupt()
         {
             _corrupt = _shuffleGFX || _shuffleText || _hitboxFix || _shuffleFont || _shuffleAudio || _shuffleBG;

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HATE"
+             x:Class="HATE.MainPage"
+             BackgroundColor="Black">
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style TargetType="Label" x:Key="SwitchTextStyle">
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,0"/>
+            <Setter Property="FontSize" Value="14.25"/>
+        </Style>
+        <Style TargetType="StackLayout" x:Key="SwitchMargin">
+            <Setter Property="Orientation" Value="Horizontal"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+    </ContentPage.Resources>
+    <StackLayout Margin="15,9">
+        <StackLayout>
+            <Label FontFamily="Microsoft Sans Serif" Text="Current Game:" 
+           HorizontalOptions="Start" FontSize="10.25"/>
+            <Label FontFamily="Microsoft Sans Serif" Text="Deltarune" x:Name="labGameName"
+           HorizontalOptions="Start" TextColor="Yellow" FontSize="12.25"/>
+        </StackLayout>
+        <StackLayout Margin="0,1,0,0">
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShuffleAudio"
+           HorizontalOptions="Start" Toggled="chbShuffleAudio_Toggled"/>
+                <Label Text="Shuffle Audio" Style="{DynamicResource SwitchTextStyle}" x:Name="labShuffleAudio"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShuffleGFX" Toggled="chbShuffleGFX_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Shuffle GFX" Style="{DynamicResource SwitchTextStyle}" x:Name="labShuffleGFX"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShuffleFonts" Toggled="chbShuffleFonts_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Shuffle Fonts" Style="{DynamicResource SwitchTextStyle}" x:Name="labShuffleFonts"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbHitboxFix" Toggled="chbHitboxFix_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Hitbox Fix" Style="{DynamicResource SwitchTextStyle}" x:Name="labHitboxFix"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShuffleSprites" Toggled="chbShuffleSprites_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Shuffle Sprites" Style="{DynamicResource SwitchTextStyle}" x:Name="labShuffleSprites"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShuffleText" Toggled="chbShuffleText_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Shuffle Text" Style="{DynamicResource SwitchTextStyle}" x:Name="labShuffleText"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbGarbleText" Toggled="chbGarbleText_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Garble Text" Style="{DynamicResource SwitchTextStyle}" x:Name="labGarbleText"/>
+            </StackLayout>
+            <StackLayout Style="{DynamicResource SwitchMargin}">
+                <Switch x:Name="chbShowSeed" Toggled="chbShowSeed_Toggled"
+           HorizontalOptions="Start"/>
+                <Label Text="Show Seed" Style="{DynamicResource SwitchTextStyle}" x:Name="labShowSeed"/>
+            </StackLayout>
+        </StackLayout>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label HorizontalOptions="Center" Text="Seed:" FontSize="10.25" Margin="0"/>
+                <Entry Grid.Column="1" HeightRequest="20" FontSize="8.25" FontFamily="Microsoft Sans Serif" FontAttributes="Bold" Margin="0" x:Name="txtSeed"/>
+                <Label HorizontalOptions="Center" Text="Power:" Grid.Row="1" FontSize="10.25" Margin="0"/>
+                <Entry Grid.Row="1" Grid.Column="1" Placeholder="0 - 255" HeightRequest="20" FontAttributes="Bold" FontFamily="Microsoft Sans Serif" FontSize="8.25" Margin="0" x:Name="txtPower"/>
+            </Grid>
+        </StackLayout>
+        <StackLayout Margin="0,5">
+            <Button Text="-CORRUPT-" FontFamily="Microsoft Sans Serif" FontSize="8.25" FontAttributes="Bold" BackgroundColor="Black" BorderColor="Coral" TextColor="Coral" Margin="0,0,0,1" x:Name="btnCorrupt" Clicked="button_Corrupt_Clicked"/>
+            <Button Text="-LAUNCH-" FontFamily="Microsoft Sans Serif" FontSize="8.25" FontAttributes="Bold" BackgroundColor="Black" BorderColor="Fuchsia" TextColor="Fuchsia" x:Name="btnLaunch" Clicked="btnLaunch_Clicked"/>
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>
