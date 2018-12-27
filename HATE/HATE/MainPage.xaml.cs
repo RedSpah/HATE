@@ -26,7 +26,7 @@ namespace HATE
         private StreamWriter _logWriter;
 
         //Code from https://stackoverflow.com/questions/38790802/determine-operating-system-in-net-core
-        //Was needed because with what we get isn't the best (only shows if we are on windows in Unix which could be macOS or Linix)
+        //Was needed because what we get isn't the best when using .NET Standard (only shows if we are on windows or Unix (which could be macOS or Linix))
         private OS OperatingSystem
         {
             get {
@@ -59,6 +59,7 @@ namespace HATE
                 }
             }
         }
+
         private bool _shuffleGFX = false;
         private bool _shuffleText = false;
         private bool _hitboxFix = false;
@@ -69,9 +70,6 @@ namespace HATE
         private bool _corrupt = false;
         private bool _showSeed = false;
         private float _truePower = 0;
-        private readonly string _defaultPowerText = "0 - 255";
-
-        private readonly string[] _friskSpriteHandles = { "spr_maincharal", "spr_maincharau", "spr_maincharar", "spr_maincharad", "spr_maincharau_stark", "spr_maincharar_stark", "spr_maincharal_stark", "spr_maincharad_pranked", "spr_maincharal_pranked", "spr_maincharad_umbrellafall", "spr_maincharau_umbrellafall", "spr_maincharar_umbrellafall", "spr_maincharal_umbrellafall", "spr_maincharad_umbrella", "spr_maincharau_umbrella", "spr_maincharar_umbrella", "spr_maincharal_umbrella", "spr_charad", "spr_charad_fall", "spr_charar", "spr_charar_fall", "spr_charal", "spr_charal_fall", "spr_charau", "spr_charau_fall", "spr_maincharar_shadow", "spr_maincharal_shadow", "spr_maincharau_shadow", "spr_maincharad_shadow", "spr_maincharal_tomato", "spr_maincharal_burnt", "spr_maincharal_water", "spr_maincharar_water", "spr_maincharau_water", "spr_maincharad_water", "spr_mainchara_pourwater", "spr_maincharad_b", "spr_maincharau_b", "spr_maincharar_b", "spr_maincharal_b", "spr_doorA", "spr_doorB", "spr_doorC", "spr_doorD", "spr_doorX" };
 
         private static readonly DateTime _unixTimeZero = new DateTime(1970, 1, 1);
         private Random _random;
@@ -82,6 +80,7 @@ namespace HATE
             InitializeComponent();
             Logger.MessageHandle += Logger_SecondChange;
 
+            MessageBox.Show("Title", "Wew messages", MessageBox.MessageIcon.Warning, MessageBox.MessageButton.Yes);
             if (!File.Exists(Main._dataWin))
             {
                 if (File.Exists("game.ios"))
@@ -108,7 +107,6 @@ namespace HATE
             //This is so it doesn't keep starting the program over and over in case something messes up
             if ((Environment.OSVersion).Platform == PlatformID.Win32NT && Process.GetProcessesByName("HATE").Length == 1)
             {
-                DisplayActionSheet("Title", "cancel", "What?", "Ok").ConfigureAwait(true).GetAwaiter().GetResult();
                 if (Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)) || Directory.GetCurrentDirectory().Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)) && !IsElevated)
                 {
                     DisplayActionSheet("Title","cancel","What?","Ok").ConfigureAwait(true).GetAwaiter().GetResult();
@@ -164,11 +162,16 @@ namespace HATE
             {
                 var files = Directory.EnumerateFiles(Directory.GetCurrentDirectory());
                 foreach (string s in files)
-                    if (!s.Remove(0, s.LastIndexOf("\\") + 1).Contains("HATE.exe") && s.Contains(".exe") || s.Contains(".app"))
+                {
+                    if (OperatingSystem == OS.Windows && !s.Remove(0, s.LastIndexOf("\\") + 1).Contains("HATE.exe") && s.Contains(".exe") || s.Contains(".app"))
                         return s.Remove(0, s.LastIndexOf("\\") + 1);
-
-                return "";
+                    else if (s != "HATE.exe" && s.Contains(".exe") || s.Contains(".app"))
+                    {
+                        return s.Remove(0, s.LastIndexOf("/") + 1);
+                    }
+                }    
             }
+            return "";
         }
 
         public string LinuxWine()

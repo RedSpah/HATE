@@ -5,19 +5,19 @@
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <Image VerticalOptions="Center"/>
-            <Label Grid.Row="1" Text="Wew this is some text that will be some messageBox content because I need to test some magical things™"/>
+            <Label Grid.Column="1" Text="Wew this is some text that will be some messageBox content because I need to test some magical things™"/>
 
-            <StackLayout Grid.Column="1" Grid.RowSpan="2">
-                <Button Text="Wew Click me"/>
+            <StackLayout Grid.Row="1" Grid.ColumnSpan="2">
+                <Button Clicked="SomeMagicalThing" Text="Wew Click me"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

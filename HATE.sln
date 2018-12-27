@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HATE", "HATE\HATE\HATE.csproj", "{921D2094-1F4D-4149-9276-73778EE75B39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HATE.GTK", "HATE.GTK\HATE.GTK.csproj", "{4828BD4F-CC7B-4198-8C59-5CF03E137F35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HATE", "HATE.GTK\HATE.csproj", "{4828BD4F-CC7B-4198-8C59-5CF03E137F35}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HATE.Core", "HATE.Core\HATE.Core.csproj", "{61A17BA7-92A6-4402-B0CE-51274F6A5E29}"
 EndProject
@@ -211,5 +211,13 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAD0AE91-1199-4BD7-A862-2696732B2C06}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$0.StandardHeader = $2
+		description = @HATE\n\nThe Deltarune/Undertale Corruptor.\n\nHowdy! I'm RED. RED the [REDACTED]!\n\nAnd this is the Undertale Corruptor! What does it do, you may ask? It allows you to shuffle game's internal data around, corrupting music, gfx and text as a result. Interested?
+		version = 4.0
 	EndGlobalSection
 EndGlobal

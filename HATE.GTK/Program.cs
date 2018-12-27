@@ -15,7 +15,7 @@ namespace HATE.GTK
             Gtk.Application.Init();
             Forms.Init();
 
-            _app = new App();
+            _app = new App(false);
             MessageBoxTask();
             LoadWindow(_app);
             Gtk.Application.Run();
@@ -27,9 +27,9 @@ namespace HATE.GTK
             window.LoadApplication(app);
             window.SetApplicationTitle("HATE");
             window.SetApplicationIcon("hateicon.png");
-            window.WidthRequest = 205;
+            window.WidthRequest = 220;
             window.DefaultWidth = window.WidthRequest;
-            window.HeightRequest = 500;
+            window.HeightRequest = 485;
             window.DefaultHeight = window.HeightRequest;
             window.AllowGrow = false;
             window.AllowShrink = false;
@@ -44,9 +44,15 @@ namespace HATE.GTK
                 {
                     await Task.Delay(250);
                 }
-                App app = new App();
-                app.IsMessageBox = true;
+                App app = new App(true);
                 LoadWindow(app);
+                while (App.NeedMessageBox)
+                {
+                    await Task.Delay(250);
+                }
+                FormsWindow formsWindow = new FormsWindow();
+                formsWindow.Destroy();
+                formsWindow.HideOnDelete();
             }
         }
     }

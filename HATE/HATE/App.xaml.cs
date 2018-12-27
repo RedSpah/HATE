@@ -8,9 +8,8 @@ namespace HATE
     public partial class App : Application
     {
         public static bool NeedMessageBox { get; set; }
-        public bool IsMessageBox { get; set; }
 
-        public App()
+        public App(bool IsMessageBox)
         {
             InitializeComponent();
 
