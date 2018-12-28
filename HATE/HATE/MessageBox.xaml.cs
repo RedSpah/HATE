@@ -19,6 +19,11 @@ namespace HATE
         public MessageBox()
         {
             InitializeComponent();
+            Setup();
+        }
+
+        public async void Setup()
+        {
             labMessage.Text = _Message;
             if (_Buttons == MessageButton.AbortRetryIgnore)
             {
@@ -64,6 +69,7 @@ namespace HATE
             _Message = Message;
             _Icon = MessageIcon;
             _Buttons = MessageButton;
+            Setup();
             App.NeedMessageBox = true;
             while (App.NeedMessageBox)
             {
@@ -75,6 +81,7 @@ namespace HATE
         {
             if (_MessageBox == null)
                 _MessageBox = new MessageBox();
+
             _MessageBox._Show(Message, MessageButton, MessageIcon, Title);
         }
 

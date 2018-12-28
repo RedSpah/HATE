@@ -8,7 +8,7 @@ namespace HATE.GTK
     public class Program
     {
         static App _app = null;
-        static FormsWindow formsWindow = null;
+        static App _messageBox = null;
 
         [STAThread]
         public static void Main(string[] args)
@@ -51,18 +51,19 @@ namespace HATE.GTK
         {
             while (true)
             {
+                FormsWindow formsWindow = null;
                 try
                 {
                     while (!App.NeedMessageBox)
                     {
                         await Task.Delay(250);
                     }
-                    if (formsWindow == null)
+                    if (_messageBox == null)
                     {
-                        App app = new App(true);
-                        formsWindow = await LoadWindow(app, 585, 150);
-                        formsWindow.DestroyWithParent = true;
+                        _messageBox = new App(true);
                     }
+
+                    formsWindow = await LoadWindow(_messageBox, 585, 150);
                     formsWindow.Show();
                     if (!string.IsNullOrWhiteSpace(MessageBox._Title))
                         formsWindow.SetApplicationTitle(MessageBox._Title);
@@ -71,10 +72,12 @@ namespace HATE.GTK
                         await Task.Delay(250);
                     }
                     formsWindow.Destroy();
+                    formsWindow = null;
                 }
                 catch
                 {
                     formsWindow.Destroy();
+                    formsWindow = null;
                 }
             }
         }
