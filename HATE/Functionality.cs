@@ -75,14 +75,20 @@ namespace HATE
 
         public bool ShuffleText_Func(Random random_, float chance, StreamWriter logstream_)
         {
-            if (lblGameName.Text == "Deltarune")
+            if (Directory.Exists("./lang") && Safe.GetFiles("./lang").Count > 0)
             {
-                return Shuffle.JSONStringShuffle("./lang/lang_en.json", "./lang/lang_en.json", random_, chance, logstream_) &&
-                       Shuffle.JSONStringShuffle("./lang/lang_ja.json", "./lang/lang_ja.json", random_, chance, logstream_);
+                bool success = true;
+
+                foreach (string path in Safe.GetFiles("./lang"))
+                {
+                    success = success && Shuffle.JSONStringShuffle(path, path, random_, chance, logstream_);
+                }
+                return success;
+
             }
             else
             {
-                MessageBox.Show(lblGameName.Text);
+                //MessageBox.Show(lblGameName.Text);
                 return Shuffle.LoadDataAndFind("STRG", random_, chance, logstream_, _dataWin, Shuffle.ComplexShuffle(Shuffle.SimpleAccumulator, ShuffleText_Shuffler, Shuffle.SimpleWriter));
             }
         }

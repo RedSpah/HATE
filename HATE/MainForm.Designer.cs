@@ -301,6 +301,7 @@
             this.MinimumSize = new System.Drawing.Size(200, 310);
             this.Name = "MainForm";
             this.Text = "HATE";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

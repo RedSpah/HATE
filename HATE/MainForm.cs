@@ -232,7 +232,7 @@ namespace HATE
             {
                 if (!Safe.CreateDirectory("Data")) { return false; }
                 if (!Safe.CopyFile(_dataWin, $"Data/{_dataWin}")) { return false; }
-                if (lblGameName.Text == "Deltarune")
+                if (Directory.Exists("./lang"))
                 {
                     if (!Safe.CopyFile("./lang/lang_en.json", "./Data/lang_en.json")) { return false; };
                     if (!Safe.CopyFile("./lang/lang_ja.json", "./Data/lang_ja.json")) { return false; };
@@ -242,17 +242,23 @@ namespace HATE
 
             if (!Safe.DeleteFile(_dataWin)) { return false; }
             _logWriter.WriteLine($"Deleted {_dataWin}.");
-            if (!Safe.DeleteFile("./lang/lang_en.json")) { return false; }
-            _logWriter.WriteLine($"Deleted ./lang/lang_en.json.");
-            if (!Safe.DeleteFile("./lang/lang_ja.json")) { return false; }
-            _logWriter.WriteLine($"Deleted ./lang/lang_ja.json.");
+            if (Directory.Exists("./lang"))
+            {
+                if (!Safe.DeleteFile("./lang/lang_en.json")) { return false; }
+                _logWriter.WriteLine($"Deleted ./lang/lang_en.json.");
+                if (!Safe.DeleteFile("./lang/lang_ja.json")) { return false; }
+                _logWriter.WriteLine($"Deleted ./lang/lang_ja.json.");
+            }
 
             if (!Safe.CopyFile($"Data/{_dataWin}", _dataWin)) { return false; }
             _logWriter.WriteLine($"Copied {_dataWin}.");
-            if (!Safe.CopyFile("./Data/lang_en.json","./lang/lang_en.json")) { return false; }
-            _logWriter.WriteLine($"Copied ./lang/lang_en.json.");
-            if (!Safe.CopyFile("./Data/lang_ja.json", "./lang/lang_ja.json")) { return false; }
-            _logWriter.WriteLine($"Copied ./lang/lang_ja.json.");
+            if (Directory.Exists("./lang"))
+            {
+                if (!Safe.CopyFile("./Data/lang_en.json", "./lang/lang_en.json")) { return false; }
+                _logWriter.WriteLine($"Copied ./lang/lang_en.json.");
+                if (!Safe.CopyFile("./Data/lang_ja.json", "./lang/lang_ja.json")) { return false; }
+                _logWriter.WriteLine($"Copied ./lang/lang_ja.json.");
+            }
 
             return true;
         }
@@ -322,5 +328,9 @@ namespace HATE
             txtPower.Text = string.IsNullOrWhiteSpace(txtPower.Text) ? _defaultPowerText : txtPower.Text;
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -76,9 +76,9 @@ namespace HATE
             return true;
         }
 
-        public static Option<List<string>> GetFiles(string dirname, bool alldirs = true, string format = "*.*")
+        public static List<string> GetFiles(string dirname, bool alldirs = true, string format = "*.*")
         {
-            if (!IsValidPath(dirname) || !Directory.Exists(dirname)) { return Option.None<List<string>>(); }
+            if (!IsValidPath(dirname) || !Directory.Exists(dirname)) { return new List<string> (); }
             
             List<string> output = new List<string>();
             try
@@ -93,9 +93,9 @@ namespace HATE
                     MessageBox.Show($"IOException has occured while attempting to get the list of files in {dirname}. Please ensure that the directory is not in use and try again.");
                 else
                     MessageBox.Show($"{ex} has occured while attempting to get the list of files in {dirname}.");
-                return Option.None<List<string>>();
+                return new List<string>();
             }
-            return Option.Some(output);
+            return output;
         }
 
         public static bool DeleteDirectory(string dirname)
