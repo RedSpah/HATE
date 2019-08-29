@@ -105,7 +105,7 @@ namespace HATE
                 return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
-
+            
         public string GetGame()
         {
             if (File.Exists("DELTARUNE.exe")) { return $"{LinuxWine()} DELTARUNE.exe"; }

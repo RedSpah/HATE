@@ -169,24 +169,18 @@ namespace HATE
             for (int i = 0; i < pointerlist.Count; i++)
             {
                 stream.Position = pointerlist[i].Address;
-                byte StrlenByte = (byte)stream.ReadByte();
+                byte Strlen = (byte)stream.ReadByte();
                 stream.Position += 3;
                 List<byte> ByteString = new List<byte>();
 
-                for (int j = 0; j < StrlenByte; j++)
+                for (int j = 0; j < Strlen; j++)
                 {
-                    byte TMP = (byte)stream.ReadByte();
-
-                    if (TMP == 0)
-                        break;
-                    else
-                        ByteString.Add(TMP);
-
+                    ByteString.Add((byte)stream.ReadByte());
                 }
 
                 string convertedString = new string(ByteString.Select(x => (char)x).ToArray());
 
-                if (StrlenByte >= 3 && !bannedStrings.Any(convertedString.Contains))
+                if (Strlen >= 3 && !bannedStrings.Any(convertedString.Contains) && !(convertedString.Any(x => x > 127)))
                     strPointerList.Add(new StringPointer(pointerlist[i], convertedString));
             }
 
